@@ -1,0 +1,2130 @@
+{
+  "asset_package": {
+    "asset_id": "robot_arm_a",
+    "asset_name": "Robot Arm A",
+    "asset_type": "robot_arm",
+    "manufacturer": "ROBOTIS",
+    "model_name": "example_model",
+    "images": [
+      "data/input/robot_arm_front.jpg",
+      "data/input/robot_arm_nameplate.jpg"
+    ],
+    "documents": [
+      "data/input/robot_arm_datasheet.pdf"
+    ],
+    "user_inputs": {
+      "asset_id": "robot_arm_a",
+      "asset_name": "Robot Arm A",
+      "manufacturer": "ROBOTIS",
+      "model_name": "example_model",
+      "asset_type": "robot_arm",
+      "rated_voltage": {
+        "value": 24,
+        "unit": "V"
+      },
+      "rated_current": {
+        "value": 3.5,
+        "unit": "A"
+      },
+      "serial_number": "RA-2026-0001",
+      "weight": {
+        "value": 12.4,
+        "unit": "kg"
+      },
+      "existing_model_path": "data/generated_models/robot_arm_a.glb",
+      "test_sensor_values": {
+        "rotation_angle": 30,
+        "temperature": 80,
+        "status": "running"
+      }
+    }
+  },
+  "cv_output": {
+    "predicted_type": "robot_arm",
+    "confidence": 0.55,
+    "segmented_images": []
+  },
+  "extracted_entities": [
+    {
+      "raw_name": "asset name",
+      "raw_value": "Robot Arm A",
+      "source": "manual_input",
+      "confidence": 1.0
+    },
+    {
+      "raw_name": "asset type",
+      "raw_value": "robot_arm",
+      "source": "manual_input",
+      "confidence": 1.0
+    },
+    {
+      "raw_name": "manufacturer",
+      "raw_value": "ROBOTIS",
+      "source": "manual_input",
+      "confidence": 1.0
+    },
+    {
+      "raw_name": "model name",
+      "raw_value": "example_model",
+      "source": "manual_input",
+      "confidence": 1.0
+    },
+    {
+      "raw_name": "rated voltage",
+      "raw_value": 24,
+      "raw_unit": "V",
+      "source": "manual_input",
+      "confidence": 1.0
+    },
+    {
+      "raw_name": "rated current",
+      "raw_value": 3.5,
+      "raw_unit": "A",
+      "source": "manual_input",
+      "confidence": 1.0
+    },
+    {
+      "raw_name": "serial number",
+      "raw_value": "RA-2026-0001",
+      "source": "manual_input",
+      "confidence": 1.0
+    },
+    {
+      "raw_name": "weight",
+      "raw_value": 12.4,
+      "raw_unit": "kg",
+      "source": "manual_input",
+      "confidence": 1.0
+    }
+  ],
+  "semantic_nodes": [
+    {
+      "semantic_node_id": "SN_001",
+      "name": "asset name",
+      "value": "Robot Arm A",
+      "value_type": "string",
+      "conceptual_definition": "Human-readable name assigned to the asset.",
+      "affordance": "Used to identify the asset in AAS and DT views.",
+      "source_description": "Extracted from manual_input.",
+      "confidence": 1.0
+    },
+    {
+      "semantic_node_id": "SN_002",
+      "name": "asset type",
+      "value": "robot_arm",
+      "value_type": "string",
+      "conceptual_definition": "Functional class or category of the asset.",
+      "affordance": "Used to select suitable submodels and DT behavior.",
+      "source_description": "Extracted from manual_input.",
+      "confidence": 1.0
+    },
+    {
+      "semantic_node_id": "SN_003",
+      "name": "manufacturer",
+      "value": "ROBOTIS",
+      "value_type": "string",
+      "conceptual_definition": "Organization that manufactured or supplied the asset.",
+      "affordance": "Used for Digital Nameplate registration and traceability.",
+      "source_description": "Extracted from manual_input.",
+      "confidence": 1.0
+    },
+    {
+      "semantic_node_id": "SN_004",
+      "name": "model name",
+      "value": "example_model",
+      "value_type": "string",
+      "conceptual_definition": "Manufacturer-specific model or product designation.",
+      "affordance": "Used for Digital Nameplate registration and catalog matching.",
+      "source_description": "Extracted from manual_input.",
+      "confidence": 1.0
+    },
+    {
+      "semantic_node_id": "SN_005",
+      "name": "rated voltage",
+      "value": 24,
+      "unit": "V",
+      "value_type": "integer",
+      "conceptual_definition": "Nominal voltage required for operating the asset.",
+      "affordance": "Used to determine electrical compatibility.",
+      "source_description": "Extracted from manual_input.",
+      "confidence": 1.0
+    },
+    {
+      "semantic_node_id": "SN_006",
+      "name": "rated current",
+      "value": 3.5,
+      "unit": "A",
+      "value_type": "float",
+      "conceptual_definition": "Nominal electrical current required by the asset.",
+      "affordance": "Used to determine electrical load requirements.",
+      "source_description": "Extracted from manual_input.",
+      "confidence": 1.0
+    },
+    {
+      "semantic_node_id": "SN_007",
+      "name": "serial number",
+      "value": "RA-2026-0001",
+      "value_type": "string",
+      "conceptual_definition": "Unique serial identifier assigned by the manufacturer.",
+      "affordance": "Used for unique asset tracking.",
+      "source_description": "Extracted from manual_input.",
+      "confidence": 1.0
+    },
+    {
+      "semantic_node_id": "SN_008",
+      "name": "weight",
+      "value": 12.4,
+      "unit": "kg",
+      "value_type": "float",
+      "conceptual_definition": "Mass or weight of the asset.",
+      "affordance": "Used for installation, transport, and simulation metadata.",
+      "source_description": "Extracted from manual_input.",
+      "confidence": 1.0
+    }
+  ],
+  "candidates_by_node": {
+    "SN_001": [
+      {
+        "candidate_id": "AAS_PROP_ASSET_NAME",
+        "idShort": "AssetName",
+        "description": "Human-readable name of the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/AssetName/1/0",
+        "aliases": [
+          "asset name",
+          "name",
+          "device name"
+        ],
+        "similarity_score": 0.25
+      },
+      {
+        "candidate_id": "AAS_PROP_SERIAL_NUMBER",
+        "idShort": "SerialNumber",
+        "description": "Unique serial number assigned to the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/SerialNumber/1/0",
+        "aliases": [
+          "serial number",
+          "serial",
+          "s/n"
+        ],
+        "similarity_score": 0.22727272727272727
+      },
+      {
+        "candidate_id": "AAS_PROP_RATED_CURRENT",
+        "idShort": "RatedCurrent",
+        "description": "Nominal current required by the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/RatedCurrent",
+        "preferred_unit": "A",
+        "aliases": [
+          "rated current",
+          "nominal current",
+          "operating current"
+        ],
+        "similarity_score": 0.125
+      },
+      {
+        "candidate_id": "AAS_PROP_ROTATION_ANGLE",
+        "idShort": "RotationAngle",
+        "description": "Rotation angle applied to the digital twin asset.",
+        "submodel": "OperationalData",
+        "semantic_id": "https://example.org/aas/operation/RotationAngle",
+        "preferred_unit": "deg",
+        "aliases": [
+          "rotation angle",
+          "angle",
+          "joint angle"
+        ],
+        "similarity_score": 0.12
+      },
+      {
+        "candidate_id": "AAS_PROP_MANUFACTURER",
+        "idShort": "ManufacturerName",
+        "description": "Name of the manufacturer or supplier.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/ManufacturerName/1/0",
+        "aliases": [
+          "manufacturer",
+          "maker",
+          "supplier"
+        ],
+        "similarity_score": 0.08695652173913043
+      }
+    ],
+    "SN_002": [
+      {
+        "candidate_id": "AAS_PROP_ASSET_TYPE",
+        "idShort": "AssetType",
+        "description": "Functional type or class of the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/AssetType",
+        "aliases": [
+          "asset type",
+          "device type",
+          "equipment type"
+        ],
+        "similarity_score": 0.3333333333333333
+      },
+      {
+        "candidate_id": "AAS_PROP_WEIGHT",
+        "idShort": "Weight",
+        "description": "Weight or mass of the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/Weight",
+        "preferred_unit": "kg",
+        "aliases": [
+          "weight",
+          "mass"
+        ],
+        "similarity_score": 0.18181818181818182
+      },
+      {
+        "candidate_id": "AAS_PROP_STATUS",
+        "idShort": "OperationalStatus",
+        "description": "Operational status or state of the asset.",
+        "submodel": "OperationalData",
+        "semantic_id": "https://example.org/aas/operation/OperationalStatus",
+        "aliases": [
+          "status",
+          "state",
+          "mode"
+        ],
+        "similarity_score": 0.18181818181818182
+      },
+      {
+        "candidate_id": "AAS_PROP_ASSET_NAME",
+        "idShort": "AssetName",
+        "description": "Human-readable name of the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/AssetName/1/0",
+        "aliases": [
+          "asset name",
+          "name",
+          "device name"
+        ],
+        "similarity_score": 0.13043478260869565
+      },
+      {
+        "candidate_id": "AAS_PROP_MANUFACTURER",
+        "idShort": "ManufacturerName",
+        "description": "Name of the manufacturer or supplier.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/ManufacturerName/1/0",
+        "aliases": [
+          "manufacturer",
+          "maker",
+          "supplier"
+        ],
+        "similarity_score": 0.13043478260869565
+      }
+    ],
+    "SN_003": [
+      {
+        "candidate_id": "AAS_PROP_MANUFACTURER",
+        "idShort": "ManufacturerName",
+        "description": "Name of the manufacturer or supplier.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/ManufacturerName/1/0",
+        "aliases": [
+          "manufacturer",
+          "maker",
+          "supplier"
+        ],
+        "similarity_score": 0.2631578947368421
+      },
+      {
+        "candidate_id": "AAS_PROP_ASSET_NAME",
+        "idShort": "AssetName",
+        "description": "Human-readable name of the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/AssetName/1/0",
+        "aliases": [
+          "asset name",
+          "name",
+          "device name"
+        ],
+        "similarity_score": 0.2
+      },
+      {
+        "candidate_id": "AAS_PROP_MODEL_NAME",
+        "idShort": "ManufacturerProductDesignation",
+        "description": "Manufacturer-specific model name or product designation.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/ManufacturerProductDesignation/1/0",
+        "aliases": [
+          "model name",
+          "model",
+          "product designation"
+        ],
+        "similarity_score": 0.2
+      },
+      {
+        "candidate_id": "AAS_PROP_SERIAL_NUMBER",
+        "idShort": "SerialNumber",
+        "description": "Unique serial number assigned to the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/SerialNumber/1/0",
+        "aliases": [
+          "serial number",
+          "serial",
+          "s/n"
+        ],
+        "similarity_score": 0.18181818181818182
+      },
+      {
+        "candidate_id": "AAS_PROP_WEIGHT",
+        "idShort": "Weight",
+        "description": "Weight or mass of the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/Weight",
+        "preferred_unit": "kg",
+        "aliases": [
+          "weight",
+          "mass"
+        ],
+        "similarity_score": 0.14285714285714285
+      }
+    ],
+    "SN_004": [
+      {
+        "candidate_id": "AAS_PROP_MODEL_NAME",
+        "idShort": "ManufacturerProductDesignation",
+        "description": "Manufacturer-specific model name or product designation.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/ManufacturerProductDesignation/1/0",
+        "aliases": [
+          "model name",
+          "model",
+          "product designation"
+        ],
+        "similarity_score": 0.6
+      },
+      {
+        "candidate_id": "AAS_PROP_MANUFACTURER",
+        "idShort": "ManufacturerName",
+        "description": "Name of the manufacturer or supplier.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/ManufacturerName/1/0",
+        "aliases": [
+          "manufacturer",
+          "maker",
+          "supplier"
+        ],
+        "similarity_score": 0.2631578947368421
+      },
+      {
+        "candidate_id": "AAS_PROP_ASSET_NAME",
+        "idShort": "AssetName",
+        "description": "Human-readable name of the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/AssetName/1/0",
+        "aliases": [
+          "asset name",
+          "name",
+          "device name"
+        ],
+        "similarity_score": 0.14285714285714285
+      },
+      {
+        "candidate_id": "AAS_PROP_TEMPERATURE",
+        "idShort": "Temperature",
+        "description": "Temperature value used for status and visual validation.",
+        "submodel": "OperationalData",
+        "semantic_id": "https://example.org/aas/operation/Temperature",
+        "preferred_unit": "°C",
+        "aliases": [
+          "temperature",
+          "temp"
+        ],
+        "similarity_score": 0.125
+      },
+      {
+        "candidate_id": "AAS_PROP_SERIAL_NUMBER",
+        "idShort": "SerialNumber",
+        "description": "Unique serial number assigned to the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/SerialNumber/1/0",
+        "aliases": [
+          "serial number",
+          "serial",
+          "s/n"
+        ],
+        "similarity_score": 0.08333333333333333
+      }
+    ],
+    "SN_005": [
+      {
+        "candidate_id": "AAS_PROP_NOMINAL_VOLTAGE",
+        "idShort": "NominalVoltage",
+        "description": "Nominal voltage required for operating the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/NominalVoltage",
+        "preferred_unit": "V",
+        "aliases": [
+          "rated voltage",
+          "nominal voltage",
+          "operating voltage"
+        ],
+        "similarity_score": 0.6625
+      },
+      {
+        "candidate_id": "AAS_PROP_RATED_CURRENT",
+        "idShort": "RatedCurrent",
+        "description": "Nominal current required by the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/RatedCurrent",
+        "preferred_unit": "A",
+        "aliases": [
+          "rated current",
+          "nominal current",
+          "operating current"
+        ],
+        "similarity_score": 0.3157894736842105
+      },
+      {
+        "candidate_id": "AAS_PROP_SERIAL_NUMBER",
+        "idShort": "SerialNumber",
+        "description": "Unique serial number assigned to the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/SerialNumber/1/0",
+        "aliases": [
+          "serial number",
+          "serial",
+          "s/n"
+        ],
+        "similarity_score": 0.13636363636363635
+      },
+      {
+        "candidate_id": "AAS_PROP_ROTATION_ANGLE",
+        "idShort": "RotationAngle",
+        "description": "Rotation angle applied to the digital twin asset.",
+        "submodel": "OperationalData",
+        "semantic_id": "https://example.org/aas/operation/RotationAngle",
+        "preferred_unit": "deg",
+        "aliases": [
+          "rotation angle",
+          "angle",
+          "joint angle"
+        ],
+        "similarity_score": 0.13043478260869565
+      },
+      {
+        "candidate_id": "AAS_PROP_ASSET_NAME",
+        "idShort": "AssetName",
+        "description": "Human-readable name of the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/AssetName/1/0",
+        "aliases": [
+          "asset name",
+          "name",
+          "device name"
+        ],
+        "similarity_score": 0.09523809523809523
+      }
+    ],
+    "SN_006": [
+      {
+        "candidate_id": "AAS_PROP_RATED_CURRENT",
+        "idShort": "RatedCurrent",
+        "description": "Nominal current required by the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/RatedCurrent",
+        "preferred_unit": "A",
+        "aliases": [
+          "rated current",
+          "nominal current",
+          "operating current"
+        ],
+        "similarity_score": 0.5705882352941176
+      },
+      {
+        "candidate_id": "AAS_PROP_NOMINAL_VOLTAGE",
+        "idShort": "NominalVoltage",
+        "description": "Nominal voltage required for operating the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/NominalVoltage",
+        "preferred_unit": "V",
+        "aliases": [
+          "rated voltage",
+          "nominal voltage",
+          "operating voltage"
+        ],
+        "similarity_score": 0.25
+      },
+      {
+        "candidate_id": "AAS_PROP_SERIAL_NUMBER",
+        "idShort": "SerialNumber",
+        "description": "Unique serial number assigned to the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/SerialNumber/1/0",
+        "aliases": [
+          "serial number",
+          "serial",
+          "s/n"
+        ],
+        "similarity_score": 0.13636363636363635
+      },
+      {
+        "candidate_id": "AAS_PROP_ROTATION_ANGLE",
+        "idShort": "RotationAngle",
+        "description": "Rotation angle applied to the digital twin asset.",
+        "submodel": "OperationalData",
+        "semantic_id": "https://example.org/aas/operation/RotationAngle",
+        "preferred_unit": "deg",
+        "aliases": [
+          "rotation angle",
+          "angle",
+          "joint angle"
+        ],
+        "similarity_score": 0.13043478260869565
+      },
+      {
+        "candidate_id": "AAS_PROP_ASSET_NAME",
+        "idShort": "AssetName",
+        "description": "Human-readable name of the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/AssetName/1/0",
+        "aliases": [
+          "asset name",
+          "name",
+          "device name"
+        ],
+        "similarity_score": 0.09523809523809523
+      }
+    ],
+    "SN_007": [
+      {
+        "candidate_id": "AAS_PROP_SERIAL_NUMBER",
+        "idShort": "SerialNumber",
+        "description": "Unique serial number assigned to the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/SerialNumber/1/0",
+        "aliases": [
+          "serial number",
+          "serial",
+          "s/n"
+        ],
+        "similarity_score": 0.35294117647058826
+      },
+      {
+        "candidate_id": "AAS_PROP_NOMINAL_VOLTAGE",
+        "idShort": "NominalVoltage",
+        "description": "Nominal voltage required for operating the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/NominalVoltage",
+        "preferred_unit": "V",
+        "aliases": [
+          "rated voltage",
+          "nominal voltage",
+          "operating voltage"
+        ],
+        "similarity_score": 0.15
+      },
+      {
+        "candidate_id": "AAS_PROP_RATED_CURRENT",
+        "idShort": "RatedCurrent",
+        "description": "Nominal current required by the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/RatedCurrent",
+        "preferred_unit": "A",
+        "aliases": [
+          "rated current",
+          "nominal current",
+          "operating current"
+        ],
+        "similarity_score": 0.15
+      },
+      {
+        "candidate_id": "AAS_PROP_ASSET_NAME",
+        "idShort": "AssetName",
+        "description": "Human-readable name of the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/AssetName/1/0",
+        "aliases": [
+          "asset name",
+          "name",
+          "device name"
+        ],
+        "similarity_score": 0.10526315789473684
+      },
+      {
+        "candidate_id": "AAS_PROP_MANUFACTURER",
+        "idShort": "ManufacturerName",
+        "description": "Name of the manufacturer or supplier.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/ManufacturerName/1/0",
+        "aliases": [
+          "manufacturer",
+          "maker",
+          "supplier"
+        ],
+        "similarity_score": 0.10526315789473684
+      }
+    ],
+    "SN_008": [
+      {
+        "candidate_id": "AAS_PROP_WEIGHT",
+        "idShort": "Weight",
+        "description": "Weight or mass of the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/Weight",
+        "preferred_unit": "kg",
+        "aliases": [
+          "weight",
+          "mass"
+        ],
+        "similarity_score": 0.5375
+      },
+      {
+        "candidate_id": "AAS_PROP_STATUS",
+        "idShort": "OperationalStatus",
+        "description": "Operational status or state of the asset.",
+        "submodel": "OperationalData",
+        "semantic_id": "https://example.org/aas/operation/OperationalStatus",
+        "aliases": [
+          "status",
+          "state",
+          "mode"
+        ],
+        "similarity_score": 0.21052631578947367
+      },
+      {
+        "candidate_id": "AAS_PROP_ASSET_TYPE",
+        "idShort": "AssetType",
+        "description": "Functional type or class of the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/AssetType",
+        "aliases": [
+          "asset type",
+          "device type",
+          "equipment type"
+        ],
+        "similarity_score": 0.19047619047619047
+      },
+      {
+        "candidate_id": "AAS_PROP_ASSET_NAME",
+        "idShort": "AssetName",
+        "description": "Human-readable name of the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/AssetName/1/0",
+        "aliases": [
+          "asset name",
+          "name",
+          "device name"
+        ],
+        "similarity_score": 0.15
+      },
+      {
+        "candidate_id": "AAS_PROP_MANUFACTURER",
+        "idShort": "ManufacturerName",
+        "description": "Name of the manufacturer or supplier.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/ManufacturerName/1/0",
+        "aliases": [
+          "manufacturer",
+          "maker",
+          "supplier"
+        ],
+        "similarity_score": 0.15
+      }
+    ]
+  },
+  "match_results": [
+    {
+      "semantic_node_id": "SN_001",
+      "selected_candidate_id": "AAS_PROP_ASSET_NAME",
+      "match": true,
+      "match_score": 0.6208333333333333,
+      "reason": "Matched by lexical similarity, candidate retrieval score, and unit compatibility.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_ASSET_NAME",
+        "idShort": "AssetName",
+        "description": "Human-readable name of the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/AssetName/1/0",
+        "aliases": [
+          "asset name",
+          "name",
+          "device name"
+        ],
+        "similarity_score": 0.25
+      }
+    },
+    {
+      "semantic_node_id": "SN_001",
+      "match": false,
+      "match_score": 0.125,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_SERIAL_NUMBER",
+        "idShort": "SerialNumber",
+        "description": "Unique serial number assigned to the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/SerialNumber/1/0",
+        "aliases": [
+          "serial number",
+          "serial",
+          "s/n"
+        ],
+        "similarity_score": 0.22727272727272727
+      }
+    },
+    {
+      "semantic_node_id": "SN_001",
+      "match": false,
+      "match_score": 0.06875,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_RATED_CURRENT",
+        "idShort": "RatedCurrent",
+        "description": "Nominal current required by the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/RatedCurrent",
+        "preferred_unit": "A",
+        "aliases": [
+          "rated current",
+          "nominal current",
+          "operating current"
+        ],
+        "similarity_score": 0.125
+      }
+    },
+    {
+      "semantic_node_id": "SN_001",
+      "match": false,
+      "match_score": 0.066,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_ROTATION_ANGLE",
+        "idShort": "RotationAngle",
+        "description": "Rotation angle applied to the digital twin asset.",
+        "submodel": "OperationalData",
+        "semantic_id": "https://example.org/aas/operation/RotationAngle",
+        "preferred_unit": "deg",
+        "aliases": [
+          "rotation angle",
+          "angle",
+          "joint angle"
+        ],
+        "similarity_score": 0.12
+      }
+    },
+    {
+      "semantic_node_id": "SN_001",
+      "match": false,
+      "match_score": 0.11782608695652173,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_MANUFACTURER",
+        "idShort": "ManufacturerName",
+        "description": "Name of the manufacturer or supplier.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/ManufacturerName/1/0",
+        "aliases": [
+          "manufacturer",
+          "maker",
+          "supplier"
+        ],
+        "similarity_score": 0.08695652173913043
+      }
+    },
+    {
+      "semantic_node_id": "SN_002",
+      "selected_candidate_id": "AAS_PROP_ASSET_TYPE",
+      "match": true,
+      "match_score": 0.6083333333333334,
+      "reason": "Matched by lexical similarity, candidate retrieval score, and unit compatibility.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_ASSET_TYPE",
+        "idShort": "AssetType",
+        "description": "Functional type or class of the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/AssetType",
+        "aliases": [
+          "asset type",
+          "device type",
+          "equipment type"
+        ],
+        "similarity_score": 0.3333333333333333
+      }
+    },
+    {
+      "semantic_node_id": "SN_002",
+      "match": false,
+      "match_score": 0.1,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_WEIGHT",
+        "idShort": "Weight",
+        "description": "Weight or mass of the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/Weight",
+        "preferred_unit": "kg",
+        "aliases": [
+          "weight",
+          "mass"
+        ],
+        "similarity_score": 0.18181818181818182
+      }
+    },
+    {
+      "semantic_node_id": "SN_002",
+      "match": false,
+      "match_score": 0.1,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_STATUS",
+        "idShort": "OperationalStatus",
+        "description": "Operational status or state of the asset.",
+        "submodel": "OperationalData",
+        "semantic_id": "https://example.org/aas/operation/OperationalStatus",
+        "aliases": [
+          "status",
+          "state",
+          "mode"
+        ],
+        "similarity_score": 0.18181818181818182
+      }
+    },
+    {
+      "semantic_node_id": "SN_002",
+      "match": false,
+      "match_score": 0.1592391304347826,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_ASSET_NAME",
+        "idShort": "AssetName",
+        "description": "Human-readable name of the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/AssetName/1/0",
+        "aliases": [
+          "asset name",
+          "name",
+          "device name"
+        ],
+        "similarity_score": 0.13043478260869565
+      }
+    },
+    {
+      "semantic_node_id": "SN_002",
+      "match": false,
+      "match_score": 0.07173913043478261,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_MANUFACTURER",
+        "idShort": "ManufacturerName",
+        "description": "Name of the manufacturer or supplier.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/ManufacturerName/1/0",
+        "aliases": [
+          "manufacturer",
+          "maker",
+          "supplier"
+        ],
+        "similarity_score": 0.13043478260869565
+      }
+    },
+    {
+      "semantic_node_id": "SN_003",
+      "selected_candidate_id": "AAS_PROP_MANUFACTURER",
+      "match": true,
+      "match_score": 0.4822368421052632,
+      "reason": "Matched by lexical similarity, candidate retrieval score, and unit compatibility.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_MANUFACTURER",
+        "idShort": "ManufacturerName",
+        "description": "Name of the manufacturer or supplier.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/ManufacturerName/1/0",
+        "aliases": [
+          "manufacturer",
+          "maker",
+          "supplier"
+        ],
+        "similarity_score": 0.2631578947368421
+      }
+    },
+    {
+      "semantic_node_id": "SN_003",
+      "match": false,
+      "match_score": 0.11000000000000001,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_ASSET_NAME",
+        "idShort": "AssetName",
+        "description": "Human-readable name of the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/AssetName/1/0",
+        "aliases": [
+          "asset name",
+          "name",
+          "device name"
+        ],
+        "similarity_score": 0.2
+      }
+    },
+    {
+      "semantic_node_id": "SN_003",
+      "match": false,
+      "match_score": 0.18,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_MODEL_NAME",
+        "idShort": "ManufacturerProductDesignation",
+        "description": "Manufacturer-specific model name or product designation.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/ManufacturerProductDesignation/1/0",
+        "aliases": [
+          "model name",
+          "model",
+          "product designation"
+        ],
+        "similarity_score": 0.2
+      }
+    },
+    {
+      "semantic_node_id": "SN_003",
+      "match": false,
+      "match_score": 0.1,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_SERIAL_NUMBER",
+        "idShort": "SerialNumber",
+        "description": "Unique serial number assigned to the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/SerialNumber/1/0",
+        "aliases": [
+          "serial number",
+          "serial",
+          "s/n"
+        ],
+        "similarity_score": 0.18181818181818182
+      }
+    },
+    {
+      "semantic_node_id": "SN_003",
+      "match": false,
+      "match_score": 0.07857142857142857,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_WEIGHT",
+        "idShort": "Weight",
+        "description": "Weight or mass of the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/Weight",
+        "preferred_unit": "kg",
+        "aliases": [
+          "weight",
+          "mass"
+        ],
+        "similarity_score": 0.14285714285714285
+      }
+    },
+    {
+      "semantic_node_id": "SN_004",
+      "selected_candidate_id": "AAS_PROP_MODEL_NAME",
+      "match": true,
+      "match_score": 0.72,
+      "reason": "Matched by lexical similarity, candidate retrieval score, and unit compatibility.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_MODEL_NAME",
+        "idShort": "ManufacturerProductDesignation",
+        "description": "Manufacturer-specific model name or product designation.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/ManufacturerProductDesignation/1/0",
+        "aliases": [
+          "model name",
+          "model",
+          "product designation"
+        ],
+        "similarity_score": 0.6
+      }
+    },
+    {
+      "semantic_node_id": "SN_004",
+      "match": false,
+      "match_score": 0.21473684210526317,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_MANUFACTURER",
+        "idShort": "ManufacturerName",
+        "description": "Name of the manufacturer or supplier.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/ManufacturerName/1/0",
+        "aliases": [
+          "manufacturer",
+          "maker",
+          "supplier"
+        ],
+        "similarity_score": 0.2631578947368421
+      }
+    },
+    {
+      "semantic_node_id": "SN_004",
+      "match": false,
+      "match_score": 0.16607142857142856,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_ASSET_NAME",
+        "idShort": "AssetName",
+        "description": "Human-readable name of the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/AssetName/1/0",
+        "aliases": [
+          "asset name",
+          "name",
+          "device name"
+        ],
+        "similarity_score": 0.14285714285714285
+      }
+    },
+    {
+      "semantic_node_id": "SN_004",
+      "match": false,
+      "match_score": 0.06875,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_TEMPERATURE",
+        "idShort": "Temperature",
+        "description": "Temperature value used for status and visual validation.",
+        "submodel": "OperationalData",
+        "semantic_id": "https://example.org/aas/operation/Temperature",
+        "preferred_unit": "°C",
+        "aliases": [
+          "temperature",
+          "temp"
+        ],
+        "similarity_score": 0.125
+      }
+    },
+    {
+      "semantic_node_id": "SN_004",
+      "match": false,
+      "match_score": 0.04583333333333334,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_SERIAL_NUMBER",
+        "idShort": "SerialNumber",
+        "description": "Unique serial number assigned to the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/SerialNumber/1/0",
+        "aliases": [
+          "serial number",
+          "serial",
+          "s/n"
+        ],
+        "similarity_score": 0.08333333333333333
+      }
+    },
+    {
+      "semantic_node_id": "SN_005",
+      "selected_candidate_id": "AAS_PROP_NOMINAL_VOLTAGE",
+      "match": true,
+      "match_score": 0.8893749999999999,
+      "reason": "Matched by lexical similarity, candidate retrieval score, and unit compatibility.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_NOMINAL_VOLTAGE",
+        "idShort": "NominalVoltage",
+        "description": "Nominal voltage required for operating the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/NominalVoltage",
+        "preferred_unit": "V",
+        "aliases": [
+          "rated voltage",
+          "nominal voltage",
+          "operating voltage"
+        ],
+        "similarity_score": 0.6625
+      }
+    },
+    {
+      "semantic_node_id": "SN_005",
+      "match": false,
+      "match_score": 0.24368421052631578,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_RATED_CURRENT",
+        "idShort": "RatedCurrent",
+        "description": "Nominal current required by the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/RatedCurrent",
+        "preferred_unit": "A",
+        "aliases": [
+          "rated current",
+          "nominal current",
+          "operating current"
+        ],
+        "similarity_score": 0.3157894736842105
+      }
+    },
+    {
+      "semantic_node_id": "SN_005",
+      "match": false,
+      "match_score": 0.075,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_SERIAL_NUMBER",
+        "idShort": "SerialNumber",
+        "description": "Unique serial number assigned to the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/SerialNumber/1/0",
+        "aliases": [
+          "serial number",
+          "serial",
+          "s/n"
+        ],
+        "similarity_score": 0.13636363636363635
+      }
+    },
+    {
+      "semantic_node_id": "SN_005",
+      "match": false,
+      "match_score": 0.07173913043478261,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_ROTATION_ANGLE",
+        "idShort": "RotationAngle",
+        "description": "Rotation angle applied to the digital twin asset.",
+        "submodel": "OperationalData",
+        "semantic_id": "https://example.org/aas/operation/RotationAngle",
+        "preferred_unit": "deg",
+        "aliases": [
+          "rotation angle",
+          "angle",
+          "joint angle"
+        ],
+        "similarity_score": 0.13043478260869565
+      }
+    },
+    {
+      "semantic_node_id": "SN_005",
+      "match": false,
+      "match_score": 0.05238095238095238,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_ASSET_NAME",
+        "idShort": "AssetName",
+        "description": "Human-readable name of the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/AssetName/1/0",
+        "aliases": [
+          "asset name",
+          "name",
+          "device name"
+        ],
+        "similarity_score": 0.09523809523809523
+      }
+    },
+    {
+      "semantic_node_id": "SN_006",
+      "selected_candidate_id": "AAS_PROP_RATED_CURRENT",
+      "match": true,
+      "match_score": 0.8388235294117646,
+      "reason": "Matched by lexical similarity, candidate retrieval score, and unit compatibility.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_RATED_CURRENT",
+        "idShort": "RatedCurrent",
+        "description": "Nominal current required by the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/RatedCurrent",
+        "preferred_unit": "A",
+        "aliases": [
+          "rated current",
+          "nominal current",
+          "operating current"
+        ],
+        "similarity_score": 0.5705882352941176
+      }
+    },
+    {
+      "semantic_node_id": "SN_006",
+      "match": false,
+      "match_score": 0.20750000000000002,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_NOMINAL_VOLTAGE",
+        "idShort": "NominalVoltage",
+        "description": "Nominal voltage required for operating the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/NominalVoltage",
+        "preferred_unit": "V",
+        "aliases": [
+          "rated voltage",
+          "nominal voltage",
+          "operating voltage"
+        ],
+        "similarity_score": 0.25
+      }
+    },
+    {
+      "semantic_node_id": "SN_006",
+      "match": false,
+      "match_score": 0.075,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_SERIAL_NUMBER",
+        "idShort": "SerialNumber",
+        "description": "Unique serial number assigned to the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/SerialNumber/1/0",
+        "aliases": [
+          "serial number",
+          "serial",
+          "s/n"
+        ],
+        "similarity_score": 0.13636363636363635
+      }
+    },
+    {
+      "semantic_node_id": "SN_006",
+      "match": false,
+      "match_score": 0.07173913043478261,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_ROTATION_ANGLE",
+        "idShort": "RotationAngle",
+        "description": "Rotation angle applied to the digital twin asset.",
+        "submodel": "OperationalData",
+        "semantic_id": "https://example.org/aas/operation/RotationAngle",
+        "preferred_unit": "deg",
+        "aliases": [
+          "rotation angle",
+          "angle",
+          "joint angle"
+        ],
+        "similarity_score": 0.13043478260869565
+      }
+    },
+    {
+      "semantic_node_id": "SN_006",
+      "match": false,
+      "match_score": 0.05238095238095238,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_ASSET_NAME",
+        "idShort": "AssetName",
+        "description": "Human-readable name of the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/AssetName/1/0",
+        "aliases": [
+          "asset name",
+          "name",
+          "device name"
+        ],
+        "similarity_score": 0.09523809523809523
+      }
+    },
+    {
+      "semantic_node_id": "SN_007",
+      "selected_candidate_id": "AAS_PROP_SERIAL_NUMBER",
+      "match": true,
+      "match_score": 0.6191176470588236,
+      "reason": "Matched by lexical similarity, candidate retrieval score, and unit compatibility.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_SERIAL_NUMBER",
+        "idShort": "SerialNumber",
+        "description": "Unique serial number assigned to the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/SerialNumber/1/0",
+        "aliases": [
+          "serial number",
+          "serial",
+          "s/n"
+        ],
+        "similarity_score": 0.35294117647058826
+      }
+    },
+    {
+      "semantic_node_id": "SN_007",
+      "match": false,
+      "match_score": 0.0825,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_NOMINAL_VOLTAGE",
+        "idShort": "NominalVoltage",
+        "description": "Nominal voltage required for operating the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/NominalVoltage",
+        "preferred_unit": "V",
+        "aliases": [
+          "rated voltage",
+          "nominal voltage",
+          "operating voltage"
+        ],
+        "similarity_score": 0.15
+      }
+    },
+    {
+      "semantic_node_id": "SN_007",
+      "match": false,
+      "match_score": 0.0825,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_RATED_CURRENT",
+        "idShort": "RatedCurrent",
+        "description": "Nominal current required by the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/RatedCurrent",
+        "preferred_unit": "A",
+        "aliases": [
+          "rated current",
+          "nominal current",
+          "operating current"
+        ],
+        "similarity_score": 0.15
+      }
+    },
+    {
+      "semantic_node_id": "SN_007",
+      "match": false,
+      "match_score": 0.05789473684210526,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_ASSET_NAME",
+        "idShort": "AssetName",
+        "description": "Human-readable name of the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/AssetName/1/0",
+        "aliases": [
+          "asset name",
+          "name",
+          "device name"
+        ],
+        "similarity_score": 0.10526315789473684
+      }
+    },
+    {
+      "semantic_node_id": "SN_007",
+      "match": false,
+      "match_score": 0.05789473684210526,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_MANUFACTURER",
+        "idShort": "ManufacturerName",
+        "description": "Name of the manufacturer or supplier.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/ManufacturerName/1/0",
+        "aliases": [
+          "manufacturer",
+          "maker",
+          "supplier"
+        ],
+        "similarity_score": 0.10526315789473684
+      }
+    },
+    {
+      "semantic_node_id": "SN_008",
+      "selected_candidate_id": "AAS_PROP_WEIGHT",
+      "match": true,
+      "match_score": 0.820625,
+      "reason": "Matched by lexical similarity, candidate retrieval score, and unit compatibility.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_WEIGHT",
+        "idShort": "Weight",
+        "description": "Weight or mass of the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/Weight",
+        "preferred_unit": "kg",
+        "aliases": [
+          "weight",
+          "mass"
+        ],
+        "similarity_score": 0.5375
+      }
+    },
+    {
+      "semantic_node_id": "SN_008",
+      "match": false,
+      "match_score": 0.11578947368421053,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_STATUS",
+        "idShort": "OperationalStatus",
+        "description": "Operational status or state of the asset.",
+        "submodel": "OperationalData",
+        "semantic_id": "https://example.org/aas/operation/OperationalStatus",
+        "aliases": [
+          "status",
+          "state",
+          "mode"
+        ],
+        "similarity_score": 0.21052631578947367
+      }
+    },
+    {
+      "semantic_node_id": "SN_008",
+      "match": false,
+      "match_score": 0.10476190476190476,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_ASSET_TYPE",
+        "idShort": "AssetType",
+        "description": "Functional type or class of the asset.",
+        "submodel": "TechnicalData",
+        "semantic_id": "https://example.org/aas/technical/AssetType",
+        "aliases": [
+          "asset type",
+          "device type",
+          "equipment type"
+        ],
+        "similarity_score": 0.19047619047619047
+      }
+    },
+    {
+      "semantic_node_id": "SN_008",
+      "match": false,
+      "match_score": 0.0825,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_ASSET_NAME",
+        "idShort": "AssetName",
+        "description": "Human-readable name of the asset.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/AssetName/1/0",
+        "aliases": [
+          "asset name",
+          "name",
+          "device name"
+        ],
+        "similarity_score": 0.15
+      }
+    },
+    {
+      "semantic_node_id": "SN_008",
+      "match": false,
+      "match_score": 0.0825,
+      "reason": "Rejected because similarity was below the configured threshold.",
+      "candidate": {
+        "candidate_id": "AAS_PROP_MANUFACTURER",
+        "idShort": "ManufacturerName",
+        "description": "Name of the manufacturer or supplier.",
+        "submodel": "DigitalNameplate",
+        "semantic_id": "https://admin-shell.io/idta/nameplate/ManufacturerName/1/0",
+        "aliases": [
+          "manufacturer",
+          "maker",
+          "supplier"
+        ],
+        "similarity_score": 0.15
+      }
+    }
+  ],
+  "matched_properties": [
+    {
+      "semantic_node_id": "SN_001",
+      "aas_property_id": "AAS_PROP_ASSET_NAME",
+      "submodel": "DigitalNameplate",
+      "idShort": "AssetName",
+      "value": "Robot Arm A",
+      "match_score": 0.6208333333333333,
+      "semantic_id": "https://admin-shell.io/idta/nameplate/AssetName/1/0"
+    },
+    {
+      "semantic_node_id": "SN_002",
+      "aas_property_id": "AAS_PROP_ASSET_TYPE",
+      "submodel": "TechnicalData",
+      "idShort": "AssetType",
+      "value": "robot_arm",
+      "match_score": 0.6083333333333334,
+      "semantic_id": "https://example.org/aas/technical/AssetType"
+    },
+    {
+      "semantic_node_id": "SN_003",
+      "aas_property_id": "AAS_PROP_MANUFACTURER",
+      "submodel": "DigitalNameplate",
+      "idShort": "ManufacturerName",
+      "value": "ROBOTIS",
+      "match_score": 0.4822368421052632,
+      "semantic_id": "https://admin-shell.io/idta/nameplate/ManufacturerName/1/0"
+    },
+    {
+      "semantic_node_id": "SN_004",
+      "aas_property_id": "AAS_PROP_MODEL_NAME",
+      "submodel": "DigitalNameplate",
+      "idShort": "ManufacturerProductDesignation",
+      "value": "example_model",
+      "match_score": 0.72,
+      "semantic_id": "https://admin-shell.io/idta/nameplate/ManufacturerProductDesignation/1/0"
+    },
+    {
+      "semantic_node_id": "SN_005",
+      "aas_property_id": "AAS_PROP_NOMINAL_VOLTAGE",
+      "submodel": "TechnicalData",
+      "idShort": "NominalVoltage",
+      "value": 24,
+      "unit": "V",
+      "match_score": 0.8893749999999999,
+      "semantic_id": "https://example.org/aas/technical/NominalVoltage"
+    },
+    {
+      "semantic_node_id": "SN_006",
+      "aas_property_id": "AAS_PROP_RATED_CURRENT",
+      "submodel": "TechnicalData",
+      "idShort": "RatedCurrent",
+      "value": 3.5,
+      "unit": "A",
+      "match_score": 0.8388235294117646,
+      "semantic_id": "https://example.org/aas/technical/RatedCurrent"
+    },
+    {
+      "semantic_node_id": "SN_007",
+      "aas_property_id": "AAS_PROP_SERIAL_NUMBER",
+      "submodel": "DigitalNameplate",
+      "idShort": "SerialNumber",
+      "value": "RA-2026-0001",
+      "match_score": 0.6191176470588236,
+      "semantic_id": "https://admin-shell.io/idta/nameplate/SerialNumber/1/0"
+    },
+    {
+      "semantic_node_id": "SN_008",
+      "aas_property_id": "AAS_PROP_WEIGHT",
+      "submodel": "TechnicalData",
+      "idShort": "Weight",
+      "value": 12.4,
+      "unit": "kg",
+      "match_score": 0.820625,
+      "semantic_id": "https://example.org/aas/technical/Weight"
+    }
+  ],
+  "aas_mapping_plan": {
+    "asset": {
+      "asset_id": "robot_arm_a",
+      "asset_name": "Robot Arm A",
+      "asset_type": "robot_arm",
+      "manufacturer": "ROBOTIS",
+      "model_name": "example_model",
+      "images": [
+        "data/input/robot_arm_front.jpg",
+        "data/input/robot_arm_nameplate.jpg"
+      ],
+      "documents": [
+        "data/input/robot_arm_datasheet.pdf"
+      ],
+      "user_inputs": {
+        "asset_id": "robot_arm_a",
+        "asset_name": "Robot Arm A",
+        "manufacturer": "ROBOTIS",
+        "model_name": "example_model",
+        "asset_type": "robot_arm",
+        "rated_voltage": {
+          "value": 24,
+          "unit": "V"
+        },
+        "rated_current": {
+          "value": 3.5,
+          "unit": "A"
+        },
+        "serial_number": "RA-2026-0001",
+        "weight": {
+          "value": 12.4,
+          "unit": "kg"
+        },
+        "existing_model_path": "data/generated_models/robot_arm_a.glb",
+        "test_sensor_values": {
+          "rotation_angle": 30,
+          "temperature": 80,
+          "status": "running"
+        }
+      }
+    },
+    "submodels": [
+      {
+        "idShort": "DigitalNameplate",
+        "properties": [
+          {
+            "semantic_node_id": "SN_001",
+            "aas_property_id": "AAS_PROP_ASSET_NAME",
+            "idShort": "AssetName",
+            "value": "Robot Arm A",
+            "unit": null,
+            "match_score": 0.6208333333333333,
+            "semanticId": "https://admin-shell.io/idta/nameplate/AssetName/1/0"
+          },
+          {
+            "semantic_node_id": "SN_003",
+            "aas_property_id": "AAS_PROP_MANUFACTURER",
+            "idShort": "ManufacturerName",
+            "value": "ROBOTIS",
+            "unit": null,
+            "match_score": 0.4822368421052632,
+            "semanticId": "https://admin-shell.io/idta/nameplate/ManufacturerName/1/0"
+          },
+          {
+            "semantic_node_id": "SN_004",
+            "aas_property_id": "AAS_PROP_MODEL_NAME",
+            "idShort": "ManufacturerProductDesignation",
+            "value": "example_model",
+            "unit": null,
+            "match_score": 0.72,
+            "semanticId": "https://admin-shell.io/idta/nameplate/ManufacturerProductDesignation/1/0"
+          },
+          {
+            "semantic_node_id": "SN_007",
+            "aas_property_id": "AAS_PROP_SERIAL_NUMBER",
+            "idShort": "SerialNumber",
+            "value": "RA-2026-0001",
+            "unit": null,
+            "match_score": 0.6191176470588236,
+            "semanticId": "https://admin-shell.io/idta/nameplate/SerialNumber/1/0"
+          }
+        ]
+      },
+      {
+        "idShort": "TechnicalData",
+        "properties": [
+          {
+            "semantic_node_id": "SN_002",
+            "aas_property_id": "AAS_PROP_ASSET_TYPE",
+            "idShort": "AssetType",
+            "value": "robot_arm",
+            "unit": null,
+            "match_score": 0.6083333333333334,
+            "semanticId": "https://example.org/aas/technical/AssetType"
+          },
+          {
+            "semantic_node_id": "SN_005",
+            "aas_property_id": "AAS_PROP_NOMINAL_VOLTAGE",
+            "idShort": "NominalVoltage",
+            "value": 24,
+            "unit": "V",
+            "match_score": 0.8893749999999999,
+            "semanticId": "https://example.org/aas/technical/NominalVoltage"
+          },
+          {
+            "semantic_node_id": "SN_006",
+            "aas_property_id": "AAS_PROP_RATED_CURRENT",
+            "idShort": "RatedCurrent",
+            "value": 3.5,
+            "unit": "A",
+            "match_score": 0.8388235294117646,
+            "semanticId": "https://example.org/aas/technical/RatedCurrent"
+          },
+          {
+            "semantic_node_id": "SN_008",
+            "aas_property_id": "AAS_PROP_WEIGHT",
+            "idShort": "Weight",
+            "value": 12.4,
+            "unit": "kg",
+            "match_score": 0.820625,
+            "semanticId": "https://example.org/aas/technical/Weight"
+          }
+        ]
+      },
+      {
+        "idShort": "ProvisionOf3DModels",
+        "properties": [
+          {
+            "semantic_node_id": null,
+            "aas_property_id": "AAS_PROP_MODEL_PATH",
+            "idShort": "ModelFile",
+            "value": "data\\generated_models\\robot_arm_a.glb",
+            "unit": null,
+            "match_score": 1.0,
+            "semanticId": "https://admin-shell.io/idta/3d/ModelFile/1/0"
+          },
+          {
+            "semantic_node_id": null,
+            "aas_property_id": "AAS_PROP_MODEL_FORMAT",
+            "idShort": "ModelFormat",
+            "value": "glb",
+            "unit": null,
+            "match_score": 1.0,
+            "semanticId": "https://admin-shell.io/idta/3d/ModelFormat/1/0"
+          },
+          {
+            "semantic_node_id": null,
+            "aas_property_id": "AAS_PROP_MODEL_GENERATION_METHOD",
+            "idShort": "GenerationMethod",
+            "value": "existing_model_reference",
+            "unit": null,
+            "match_score": 1.0,
+            "semanticId": "https://example.org/aas/3d/GenerationMethod"
+          }
+        ]
+      },
+      {
+        "idShort": "OperationalData",
+        "properties": []
+      }
+    ],
+    "model_info": {
+      "model_path": "data\\generated_models\\robot_arm_a.glb",
+      "model_format": "glb",
+      "generation_method": "existing_model_reference",
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "model_info": {
+    "model_path": "data\\generated_models\\robot_arm_a.glb",
+    "model_format": "glb",
+    "generation_method": "existing_model_reference",
+    "scale": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "rotation": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "aas_json": {
+    "assetAdministrationShells": [
+      {
+        "modelType": "AssetAdministrationShell",
+        "id": "urn:aas:robot_arm_a",
+        "idShort": "ObotRm",
+        "assetInformation": {
+          "assetKind": "Instance",
+          "globalAssetId": "urn:asset:robot_arm_a"
+        },
+        "submodels": [
+          {
+            "type": "ModelReference",
+            "keys": [
+              {
+                "type": "Submodel",
+                "value": "urn:aas:robot_arm_a:submodel:DigitalNameplate"
+              }
+            ]
+          },
+          {
+            "type": "ModelReference",
+            "keys": [
+              {
+                "type": "Submodel",
+                "value": "urn:aas:robot_arm_a:submodel:TechnicalData"
+              }
+            ]
+          },
+          {
+            "type": "ModelReference",
+            "keys": [
+              {
+                "type": "Submodel",
+                "value": "urn:aas:robot_arm_a:submodel:ProvisionOf3DModels"
+              }
+            ]
+          },
+          {
+            "type": "ModelReference",
+            "keys": [
+              {
+                "type": "Submodel",
+                "value": "urn:aas:robot_arm_a:submodel:OperationalData"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "submodels": [
+      {
+        "modelType": "Submodel",
+        "id": "urn:aas:robot_arm_a:submodel:DigitalNameplate",
+        "idShort": "DigitalNameplate",
+        "submodelElements": [
+          {
+            "modelType": "Property",
+            "idShort": "AssetName",
+            "valueType": "xs:string",
+            "value": "Robot Arm A",
+            "semanticId": {
+              "type": "ExternalReference",
+              "keys": [
+                {
+                  "type": "GlobalReference",
+                  "value": "https://admin-shell.io/idta/nameplate/AssetName/1/0"
+                }
+              ]
+            }
+          },
+          {
+            "modelType": "Property",
+            "idShort": "ManufacturerName",
+            "valueType": "xs:string",
+            "value": "ROBOTIS",
+            "semanticId": {
+              "type": "ExternalReference",
+              "keys": [
+                {
+                  "type": "GlobalReference",
+                  "value": "https://admin-shell.io/idta/nameplate/ManufacturerName/1/0"
+                }
+              ]
+            }
+          },
+          {
+            "modelType": "Property",
+            "idShort": "ManufacturerProductDesignation",
+            "valueType": "xs:string",
+            "value": "example_model",
+            "semanticId": {
+              "type": "ExternalReference",
+              "keys": [
+                {
+                  "type": "GlobalReference",
+                  "value": "https://admin-shell.io/idta/nameplate/ManufacturerProductDesignation/1/0"
+                }
+              ]
+            }
+          },
+          {
+            "modelType": "Property",
+            "idShort": "SerialNumber",
+            "valueType": "xs:string",
+            "value": "RA-2026-0001",
+            "semanticId": {
+              "type": "ExternalReference",
+              "keys": [
+                {
+                  "type": "GlobalReference",
+                  "value": "https://admin-shell.io/idta/nameplate/SerialNumber/1/0"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "modelType": "Submodel",
+        "id": "urn:aas:robot_arm_a:submodel:TechnicalData",
+        "idShort": "TechnicalData",
+        "submodelElements": [
+          {
+            "modelType": "Property",
+            "idShort": "AssetType",
+            "valueType": "xs:string",
+            "value": "robot_arm",
+            "semanticId": {
+              "type": "ExternalReference",
+              "keys": [
+                {
+                  "type": "GlobalReference",
+                  "value": "https://example.org/aas/technical/AssetType"
+                }
+              ]
+            }
+          },
+          {
+            "modelType": "Property",
+            "idShort": "NominalVoltage",
+            "valueType": "xs:int",
+            "value": "24",
+            "semanticId": {
+              "type": "ExternalReference",
+              "keys": [
+                {
+                  "type": "GlobalReference",
+                  "value": "https://example.org/aas/technical/NominalVoltage"
+                }
+              ]
+            },
+            "qualifiers": [
+              {
+                "type": "unit",
+                "valueType": "xs:string",
+                "value": "V"
+              }
+            ]
+          },
+          {
+            "modelType": "Property",
+            "idShort": "RatedCurrent",
+            "valueType": "xs:double",
+            "value": "3.5",
+            "semanticId": {
+              "type": "ExternalReference",
+              "keys": [
+                {
+                  "type": "GlobalReference",
+                  "value": "https://example.org/aas/technical/RatedCurrent"
+                }
+              ]
+            },
+            "qualifiers": [
+              {
+                "type": "unit",
+                "valueType": "xs:string",
+                "value": "A"
+              }
+            ]
+          },
+          {
+            "modelType": "Property",
+            "idShort": "Weight",
+            "valueType": "xs:double",
+            "value": "12.4",
+            "semanticId": {
+              "type": "ExternalReference",
+              "keys": [
+                {
+                  "type": "GlobalReference",
+                  "value": "https://example.org/aas/technical/Weight"
+                }
+              ]
+            },
+            "qualifiers": [
+              {
+                "type": "unit",
+                "valueType": "xs:string",
+                "value": "kg"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "modelType": "Submodel",
+        "id": "urn:aas:robot_arm_a:submodel:ProvisionOf3DModels",
+        "idShort": "ProvisionOf3DModels",
+        "submodelElements": [
+          {
+            "modelType": "Property",
+            "idShort": "ModelFile",
+            "valueType": "xs:string",
+            "value": "data\\generated_models\\robot_arm_a.glb",
+            "semanticId": {
+              "type": "ExternalReference",
+              "keys": [
+                {
+                  "type": "GlobalReference",
+                  "value": "https://admin-shell.io/idta/3d/ModelFile/1/0"
+                }
+              ]
+            }
+          },
+          {
+            "modelType": "Property",
+            "idShort": "ModelFormat",
+            "valueType": "xs:string",
+            "value": "glb",
+            "semanticId": {
+              "type": "ExternalReference",
+              "keys": [
+                {
+                  "type": "GlobalReference",
+                  "value": "https://admin-shell.io/idta/3d/ModelFormat/1/0"
+                }
+              ]
+            }
+          },
+          {
+            "modelType": "Property",
+            "idShort": "GenerationMethod",
+            "valueType": "xs:string",
+            "value": "existing_model_reference",
+            "semanticId": {
+              "type": "ExternalReference",
+              "keys": [
+                {
+                  "type": "GlobalReference",
+                  "value": "https://example.org/aas/3d/GenerationMethod"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "modelType": "Submodel",
+        "id": "urn:aas:robot_arm_a:submodel:OperationalData",
+        "idShort": "OperationalData",
+        "submodelElements": []
+      }
+    ],
+    "conceptDescriptions": [
+      {
+        "modelType": "ConceptDescription",
+        "id": "https://admin-shell.io/idta/nameplate/AssetName/1/0",
+        "idShort": "AssetName"
+      },
+      {
+        "modelType": "ConceptDescription",
+        "id": "https://admin-shell.io/idta/nameplate/ManufacturerName/1/0",
+        "idShort": "ManufacturerName"
+      },
+      {
+        "modelType": "ConceptDescription",
+        "id": "https://admin-shell.io/idta/nameplate/ManufacturerProductDesignation/1/0",
+        "idShort": "ManufacturerProductDesignation"
+      },
+      {
+        "modelType": "ConceptDescription",
+        "id": "https://admin-shell.io/idta/nameplate/SerialNumber/1/0",
+        "idShort": "SerialNumber"
+      },
+      {
+        "modelType": "ConceptDescription",
+        "id": "https://example.org/aas/technical/AssetType",
+        "idShort": "AssetType"
+      },
+      {
+        "modelType": "ConceptDescription",
+        "id": "https://example.org/aas/technical/NominalVoltage",
+        "idShort": "NominalVoltage"
+      },
+      {
+        "modelType": "ConceptDescription",
+        "id": "https://example.org/aas/technical/RatedCurrent",
+        "idShort": "RatedCurrent"
+      },
+      {
+        "modelType": "ConceptDescription",
+        "id": "https://example.org/aas/technical/Weight",
+        "idShort": "Weight"
+      },
+      {
+        "modelType": "ConceptDescription",
+        "id": "https://admin-shell.io/idta/3d/ModelFile/1/0",
+        "idShort": "ModelFile"
+      },
+      {
+        "modelType": "ConceptDescription",
+        "id": "https://admin-shell.io/idta/3d/ModelFormat/1/0",
+        "idShort": "ModelFormat"
+      },
+      {
+        "modelType": "ConceptDescription",
+        "id": "https://example.org/aas/3d/GenerationMethod",
+        "idShort": "GenerationMethod"
+      }
+    ]
+  },
+  "aas_validation": {
+    "is_valid": true,
+    "errors": []
+  },
+  "dt_registration": {
+    "dt_asset_id": "DT_ASSET_ROBOT_ARM_A",
+    "registration_status": "success",
+    "viewer_url": "http://localhost:3000/assets/DT_ASSET_ROBOT_ARM_A"
+  },
+  "dt_validation": {
+    "movement_test": true,
+    "state_change_test": true,
+    "visual_update_test": true,
+    "overall_status": "passed"
+  }
+}
