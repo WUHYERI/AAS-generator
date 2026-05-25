@@ -1,61 +1,208 @@
-// 1. 공통 기본 타입
+export type AASNode = AssetAdministrationShell | Submodel | SubmodelElement;
+
+// ==========================================
+// Base Types
+// ==========================================
+
+export interface LangString {
+  language: string;
+  text: string;
+}
+
+export interface Reference {
+  submodelElements: SubmodelElement[];
+  type: string;
+  keys: {
+    type: string;
+    value: string;
+  }[];
+}
+
+export interface Qualifier {
+  type: string;
+
+  valueType: string;
+
+  value?: string;
+}
+
+// ==========================================
+// Referable
+// ==========================================
+
 export interface Referable {
   idShort: string;
+
   category?: string;
+
+  description?: LangString[];
+
+  displayName?: LangString[];
 }
 
-// 2. 각 요소별 상세 타입 정의
-export interface Property extends Referable {
-  modelType: 'Property';
-  value?: string;
-  valueType: string;
-}
+// ==========================================
+// Identifiable
+// ==========================================
 
-export interface AasFile extends Referable {
-  modelType: 'File';
-  value?: string;
-  contentType: string;
-}
-
-export interface Range extends Referable {
-  modelType: 'Range';
-  min?: string;
-  max?: string;
-  valueType: string;
-}
-
-// 3. 재귀적 구조 (Collection 안에 또 다른 요소들이 들어갈 수 있음)
-export interface SubmodelElementCollection extends Referable {
-  modelType: 'SubmodelElementCollection';
-  value: SubmodelElement[]; // 재귀적 정의
-}
-
-// 4. 모든 요소를 포함하는 유니온 타입 (Discriminated Union)
-export type SubmodelElement = Property | AasFile | Range | SubmodelElementCollection;
-
-// 5. 상위 구조 정의
-export interface Submodel extends Referable {
-  submodelElements: SubmodelElement[];
-}
-
-export interface AssetAdministrationShell extends Referable {
+export interface Identifiable extends Referable {
   id: string;
-  submodels: Submodel[];
 }
 
-/** * 백엔드 전체 응답 구조
- * any를 사용했던 부분을 Record나 구체적인 타입으로 대체
- */
-export interface AasPipelineResponse {
-  asset_package: Record<string, unknown>; // any 대신 Record 사용
-  semantic_nodes: Record<string, unknown>[];
-  aas_json: {
-    assetAdministrationShells: AssetAdministrationShell[];
-    submodels: Submodel[];
-    conceptDescriptions?: Record<string, unknown>[];
+// ==========================================
+// Submodel Element Base
+// ==========================================
+
+export type ModelType =
+  | 'Property'
+  | 'MultiLanguageProperty'
+  | 'Range'
+  | 'File'
+  | 'Blob'
+  | 'Operation'
+  | 'SubmodelElementCollection'
+  | 'Submodel'
+  | 'AssetAdministrationShell';
+
+export interface BaseSubmodelElement extends Referable {
+  modelType: ModelType;
+
+  semanticId?: Reference;
+
+  qualifiers?: Qualifier[];
+}
+
+// ==========================================
+// Primitive Elements
+// ==========================================
+
+export interface Property extends BaseSubmodelElement {
+  modelType: 'Property';
+
+  valueType: string;
+
+  value?: string;
+}
+
+export interface MultiLanguageProperty extends BaseSubmodelElement {
+  modelType: 'MultiLanguageProperty';
+
+  value?: LangString[];
+}
+
+export interface Range extends BaseSubmodelElement {
+  modelType: 'Range';
+
+  valueType: string;
+
+  min?: string;
+
+  max?: string;
+}
+
+export interface AasFile extends BaseSubmodelElement {
+  modelType: 'File';
+
+  contentType: string;
+
+  value?: string;
+}
+
+export interface BlobElement extends BaseSubmodelElement {
+  modelType: 'Blob';
+
+  contentType: string;
+
+  value?: string;
+}
+
+// ==========================================
+// Collection
+// ==========================================
+
+export interface SubmodelElementCollection extends BaseSubmodelElement {
+  modelType: 'SubmodelElementCollection';
+
+  value?: SubmodelElement[];
+}
+
+// ==========================================
+// Operation
+// ==========================================
+
+export interface Operation extends BaseSubmodelElement {
+  modelType: 'Operation';
+}
+
+// ==========================================
+// Union
+// ==========================================
+
+export type SubmodelElement =
+  | Property
+  | MultiLanguageProperty
+  | Range
+  | AasFile
+  | BlobElement
+  | Operation
+  | SubmodelElementCollection;
+
+// ==========================================
+// Submodel
+// ==========================================
+
+export interface Submodel extends Identifiable {
+  modelType: 'Submodel';
+
+  kind?: 'Instance' | 'Template';
+
+  submodelElements?: SubmodelElement[];
+}
+
+// ==========================================
+// AAS
+// ==========================================
+
+export interface AssetAdministrationShell extends Identifiable {
+  modelType: 'AssetAdministrationShell';
+
+  assetInformation?: {
+    assetKind?: 'Instance' | 'Type';
+    globalAssetId?: string;
   };
+
+  submodels?: Reference[];
+}
+
+export interface UITreeAAS extends AssetAdministrationShell {
+  submodelNodes?: Submodel[];
+}
+
+// ==========================================
+// Environment
+// ==========================================
+
+export interface AASEnvironment {
+  assetAdministrationShells?: AssetAdministrationShell[];
+
+  submodels?: Submodel[];
+
+  conceptDescriptions?: unknown[];
+}
+
+// ==========================================
+// Backend Response
+// ==========================================
+
+export interface AasPipelineResponse {
+  asset_package: Record<string, unknown>;
+
+  semantic_nodes: Record<string, unknown>[];
+
+  aas_json: AASEnvironment;
+
   aas_validation: {
     is_valid: boolean;
+
     errors: string[];
   };
 }

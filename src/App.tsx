@@ -1,7 +1,7 @@
-import UploadPage from './pages/UploadPage';
+import EditPage from './pages/EditPage';
 
 function App() {
-  return <UploadPage />;
+  return <EditPage />;
 }
 
 export default App;
