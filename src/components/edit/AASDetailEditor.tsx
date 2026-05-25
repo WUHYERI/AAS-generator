@@ -1,142 +1,537 @@
 import { useEffect } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
+import { useForm, useWatch, useFieldArray } from 'react-hook-form';
 import { useAASStore } from '../../store/useAASStore';
-import pipelineDataRaw from '../../../public/mock/robot_arm_a_pipeline_result.json';
-import { Edit3, Info, Database } from 'lucide-react';
+import {
+  Edit3,
+  Info,
+  Database,
+  File as FileIcon,
+  FolderTree,
+  SlidersHorizontal,
+  Globe,
+  Plus,
+  Trash2,
+  Bookmark,
+  ShieldCheck,
+} from 'lucide-react';
+import type { AASNode } from '../../types/AAS';
 
-// 타입 임포트
-import type { AasPipelineResponse, Property, Submodel } from '../../types/AAS';
+interface LangString {
+  language: string;
+  text: string;
+}
 
-// JSON 데이터를 타입 캐스팅
-const pipelineData = pipelineDataRaw as unknown as AasPipelineResponse;
+interface KeyElement {
+  type: string;
+  value: string;
+}
 
-// 폼 데이터의 타입 정의
+interface Reference {
+  type: string;
+  keys: KeyElement[];
+}
+
+interface Qualifier {
+  type: string;
+  valueType: string;
+  value?: string;
+}
+
 interface AasFormValues {
   idShort: string;
   category: string;
-  value: string;
-  valueType: string;
+  displayName: LangString[];
+  description: LangString[];
+  semanticId?: Reference;
+  qualifiers?: Qualifier[];
+
+  value?: string;
+  valueType?: string;
+  contentType?: string;
+  min?: string;
+  max?: string;
 }
 
-function AasDetailEditor() {
-  const { selectedAASNode } = useAASStore();
+const VALUE_TYPE_OPTIONS = [
+  'xs:string',
+  'xs:boolean',
+  'xs:int',
+  'xs:double',
+  'xs:float',
+  'xs:dateTime',
+  'xs:anyURI',
+];
 
-  // react-hook-form 초기화
+function AasDetailEditor() {
+  const { selectedAASNode, updateAASNode } = useAASStore();
+
   const { register, handleSubmit, reset, control } = useForm<AasFormValues>({
     defaultValues: {
       idShort: '',
       category: 'VARIABLE',
-      value: '',
-      valueType: 'xs:string',
+      displayName: [],
+      description: [],
+      semanticId: { type: 'ExternalReference', keys: [] },
+      qualifiers: [],
     },
   });
 
-  // watch('valueType') 대신 useWatch 사용
+  // valueType 실시간 감시
   const valueType = useWatch({
     control,
     name: 'valueType',
   });
 
-  // 트리에서 노드를 선택할 때마다 폼 값을 해당 데이터로 리셋
-  useEffect(() => {
-    if (selectedAASNode) {
-      // any 대신 정의된 타입을 사용하여 데이터 탐색
-      const firstSubmodel = pipelineData.aas_json.submodels[0] as Submodel;
-      const target = firstSubmodel.submodelElements.find((el) => el.idShort === selectedAASNode) as
-        | Property
-        | undefined; // Property 타입으로 간주
+  const {
+    fields: displayFields,
+    append: appendDisplay,
+    remove: removeDisplay,
+  } = useFieldArray({
+    control,
+    name: 'displayName',
+  });
 
-      if (target) {
-        reset({
-          idShort: target.idShort,
-          category: target.category || 'VARIABLE',
-          value: target.value || '',
-          valueType: target.valueType || 'xs:string',
-        });
-      }
+  const {
+    fields: descFields,
+    append: appendDesc,
+    remove: removeDesc,
+  } = useFieldArray({
+    control,
+    name: 'description',
+  });
+
+  useEffect(() => {
+    if (!selectedAASNode) return;
+
+    const formValues: AasFormValues = {
+      idShort: selectedAASNode.idShort,
+      category: selectedAASNode.category || 'VARIABLE',
+      displayName: selectedAASNode.displayName || [],
+      description: selectedAASNode.description || [],
+      semanticId:
+        'semanticId' in selectedAASNode
+          ? selectedAASNode.semanticId || {
+              type: 'ExternalReference',
+              keys: [],
+            }
+          : {
+              type: 'ExternalReference',
+              keys: [],
+            },
+      qualifiers: 'qualifiers' in selectedAASNode ? selectedAASNode.qualifiers || [] : [],
+    };
+
+    switch (selectedAASNode.modelType) {
+      case 'Property':
+        formValues.value = selectedAASNode.value || '';
+        formValues.valueType = selectedAASNode.valueType || 'xs:string';
+        break;
+
+      case 'File':
+        formValues.value = selectedAASNode.value || '';
+        formValues.contentType = selectedAASNode.contentType || 'application/pdf';
+        break;
+
+      case 'Range':
+        formValues.min = selectedAASNode.min || '';
+        formValues.max = selectedAASNode.max || '';
+        formValues.valueType = selectedAASNode.valueType || 'xs:string';
+        break;
     }
+
+    reset(formValues);
   }, [selectedAASNode, reset]);
 
-  const onSubmit = (data: AasFormValues) => {
-    console.log('서버로 전송할 최종 데이터:', data);
-    alert('변경사항이 로컬에 반영되었습니다.');
+  const onSubmit = async (data: AasFormValues) => {
+    if (!selectedAASNode) return;
+
+    try {
+      if (updateAASNode) {
+        updateAASNode({
+          ...selectedAASNode,
+          ...data,
+        } as AASNode);
+      }
+
+      console.log(`[${selectedAASNode.modelType}] 업데이트 완료 데이터:`, data);
+
+      alert('변경사항이 성공적으로 저장되어 트리에 반영되었습니다!');
+    } catch (error) {
+      console.error('저장 중 오류 발생:', error);
+      alert('저장에 실패했습니다.');
+    }
   };
 
   if (!selectedAASNode) {
     return (
-      <div className="w-full h-full flex flex-col items-center justify-center text-subtext bg-surface border-r border-line">
+      <div className="w-full h-full flex flex-col items-center justify-center text-slate-400 bg-slate-50 border-l border-slate-200">
         <Database className="w-8 h-8 mb-2 opacity-20" />
-        <p className="text-[13px] italic font-medium">항목을 선택하면 상세 정보가 표시됩니다.</p>
+        <p className="text-[13px] italic font-medium">
+          트리에서 항목을 선택하면 상세 정보가 표시됩니다.
+        </p>
       </div>
     );
   }
 
+  const type = selectedAASNode.modelType || 'Unknown';
+
+  const isProperty = type === 'Property';
+  const isFile = type === 'File';
+  const isRange = type === 'Range';
+
+  const isCollection = type === 'SubmodelElementCollection' || type === 'Submodel';
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="w-full h-full bg-white flex flex-col border-r border-line font-sans"
+      className="w-full h-full bg-white flex flex-col border-l border-slate-200 text-slate-700 font-sans select-none"
     >
-      {/* 헤더 */}
-      <div className="h-10 px-4 flex items-center bg-surface border-b border-line gap-2 shrink-0">
-        <Edit3 className="w-4 h-4 text-subtext" />
-        <span className="text-[13px] font-bold text-slate-700">AAS Element Editor</span>
+      {/* Header */}
+      <div className="h-10 px-4 flex items-center bg-slate-100 border-b border-slate-200 justify-between shrink-0">
+        <div className="flex items-center gap-2">
+          <Edit3 className="w-3.5 h-3.5 text-slate-500" />
+
+          <span className="text-[12px] font-bold text-slate-800">
+            AAS Element Editor
+            <span className="text-blue-600 font-mono text-[11px] font-semibold bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100 ml-1">
+              {type}
+            </span>
+          </span>
+        </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-5 space-y-6">
-        {/* Referable Section */}
-        <div className="space-y-3">
-          <h3 className="text-[11px] font-bold text-accent uppercase tracking-wider flex items-center gap-1">
-            <Info className="w-3 h-3" /> Referable
-          </h3>
-          <div className="grid grid-cols-[100px_1fr] gap-y-3 text-[13px]">
-            <div className="text-subtext py-1">idShort</div>
+      {/* Body */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-5 bg-white text-[12px]">
+        {/* Referable */}
+        <div className="border border-slate-200 rounded overflow-hidden">
+          <div className="bg-slate-50 px-3 py-1.5 border-b border-slate-200 font-bold text-slate-600 flex items-center gap-1.5">
+            <Info className="w-3.5 h-3.5 text-slate-400" />
+            Referable Identification
+          </div>
+
+          <div className="p-3 grid grid-cols-[110px_1fr] gap-y-2.5 items-center">
+            <div className="text-slate-500 font-medium">idShort</div>
+
             <input
               {...register('idShort', { required: true })}
-              className="px-2 py-1 bg-surface border border-line rounded focus:border-accent-line outline-none transition-all"
-            />
-
-            <div className="text-subtext py-1">Category</div>
-            <input
-              {...register('category')}
-              className="px-2 py-1 bg-surface border border-line rounded focus:border-accent-line outline-none"
+              className="px-2 py-1 bg-slate-100 border border-slate-200 rounded text-slate-500 font-mono focus:outline-none cursor-not-allowed"
               readOnly
             />
+
+            <div className="text-slate-500 font-medium">Category</div>
+
+            <input
+              {...register('category')}
+              className="px-2 py-1 bg-white border border-slate-200 rounded outline-none focus:border-blue-400 font-mono"
+            />
           </div>
         </div>
 
-        {/* Value Section */}
-        <div className="space-y-3">
-          <h3 className="text-[11px] font-bold text-accent uppercase tracking-wider flex items-center gap-1">
-            <Database className="w-3 h-3" /> Data Content
-          </h3>
-          <div className="p-4 bg-hover-light border border-accent-line/30 rounded-lg space-y-3">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[12px] font-semibold text-subtext">Value</label>
+        {/* Language */}
+        <div className="border border-slate-200 rounded overflow-hidden">
+          <div className="bg-slate-50 px-3 py-1.5 border-b border-slate-200 font-bold text-slate-600 flex items-center justify-between">
+            <span className="flex items-center gap-1.5">
+              <Globe className="w-3.5 h-3.5 text-blue-500" />
+              Language Strings
+            </span>
+          </div>
+
+          <div className="p-3 space-y-4">
+            {/* Display Name */}
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-center text-slate-500 font-semibold">
+                <span>Display Name</span>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    appendDisplay({
+                      language: 'en',
+                      text: '',
+                    })
+                  }
+                  className="text-blue-600 flex items-center gap-0.5 hover:underline text-[11px] font-bold"
+                >
+                  <Plus className="w-3 h-3" />
+                  추가
+                </button>
+              </div>
+
+              {displayFields.map((field, index) => (
+                <div key={field.id} className="flex gap-2 items-center">
+                  <input
+                    {...register(`displayName.${index}.language`)}
+                    placeholder="ln"
+                    className="w-12 text-center px-1 py-1 border border-slate-200 rounded font-mono"
+                  />
+
+                  <input
+                    {...register(`displayName.${index}.text`)}
+                    placeholder="이름 입력"
+                    className="flex-1 px-2 py-1 border border-slate-200 rounded"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => removeDisplay(index)}
+                    className="text-rose-500 hover:text-rose-700 p-1"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {/* Description */}
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-center text-slate-500 font-semibold">
+                <span>Description</span>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    appendDesc({
+                      language: 'en',
+                      text: '',
+                    })
+                  }
+                  className="text-blue-600 flex items-center gap-0.5 hover:underline text-[11px] font-bold"
+                >
+                  <Plus className="w-3 h-3" />
+                  추가
+                </button>
+              </div>
+
+              {descFields.map((field, index) => (
+                <div key={field.id} className="flex gap-2 items-center">
+                  <input
+                    {...register(`description.${index}.language`)}
+                    placeholder="ln"
+                    className="w-12 text-center px-1 py-1 border border-slate-200 rounded font-mono"
+                  />
+
+                  <input
+                    {...register(`description.${index}.text`)}
+                    placeholder="설명 입력"
+                    className="flex-1 px-2 py-1 border border-slate-200 rounded"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => removeDesc(index)}
+                    className="text-rose-500 hover:text-rose-700 p-1"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Semantic ID */}
+        <div className="border border-slate-200 rounded overflow-hidden">
+          <div className="bg-slate-50 px-3 py-1.5 border-b border-slate-200 font-bold text-slate-600 flex items-center gap-1.5">
+            <Bookmark className="w-3.5 h-3.5 text-teal-600" />
+            Semantic ID
+          </div>
+
+          <div className="p-3 grid grid-cols-[110px_1fr] gap-y-2.5 items-center">
+            <div className="text-slate-500 font-medium">Ref Type</div>
+
+            <select
+              {...register('semanticId.type')}
+              className="px-1.5 py-1 bg-white border border-slate-200 rounded outline-none font-mono"
+            >
+              <option value="ExternalReference">ExternalReference</option>
+
+              <option value="ModelReference">ModelReference</option>
+            </select>
+
+            <div className="text-slate-500 font-medium">Keys / IRDI</div>
+
+            <div className="space-y-1.5">
               <input
-                {...register('value')}
-                className="px-3 py-2 bg-white border border-line rounded text-accent-dark font-mono font-bold outline-none focus:ring-2 focus:ring-accent/20"
+                {...register('semanticId.keys.0.value')}
+                placeholder="0173-1#02-BAA120#008"
+                className="w-full px-2 py-1 bg-white border border-slate-200 rounded font-mono text-[11px] focus:border-teal-400 outline-none"
+              />
+
+              <input
+                {...register('semanticId.keys.0.type', {
+                  value: 'GlobalReference',
+                })}
+                type="hidden"
               />
             </div>
-            <div className="flex justify-between text-[11px] text-subtext px-1">
-              <span>Value Type</span>
-              <span className="italic font-mono font-medium text-accent-dark">{valueType}</span>
-            </div>
           </div>
         </div>
+
+        {/* Property */}
+        {isProperty && (
+          <div className="border border-emerald-200 rounded overflow-hidden">
+            <div className="bg-emerald-50 px-3 py-1.5 border-b border-emerald-200 font-bold text-emerald-800 flex items-center gap-1.5">
+              <Database className="w-3.5 h-3.5 text-emerald-600" />
+              Property Data Content
+            </div>
+
+            <div className="p-3 space-y-3">
+              {/* Dynamic Value Input */}
+              <div className="flex flex-col gap-1">
+                <label className="font-semibold text-slate-600">Value (값)</label>
+
+                {valueType === 'xs:boolean' ? (
+                  <select
+                    {...register('value')}
+                    className="px-2 py-1.5 bg-white border border-slate-200 rounded text-slate-800 font-mono font-bold outline-none focus:border-emerald-400"
+                  >
+                    <option value="">Select boolean value</option>
+
+                    <option value="true">true</option>
+
+                    <option value="false">false</option>
+                  </select>
+                ) : valueType === 'xs:dateTime' ? (
+                  <input
+                    type="datetime-local"
+                    {...register('value')}
+                    className="px-2 py-1.5 bg-white border border-slate-200 rounded text-slate-800 font-mono font-bold outline-none focus:border-emerald-400"
+                  />
+                ) : valueType === 'xs:int' ||
+                  valueType === 'xs:double' ||
+                  valueType === 'xs:float' ? (
+                  <input
+                    type="number"
+                    {...register('value')}
+                    placeholder="숫자 값을 입력하세요..."
+                    className="px-2 py-1.5 bg-white border border-slate-200 rounded text-slate-800 font-mono font-bold outline-none focus:border-emerald-400"
+                  />
+                ) : valueType === 'xs:anyURI' ? (
+                  <input
+                    type="url"
+                    {...register('value')}
+                    placeholder="https://example.com"
+                    className="px-2 py-1.5 bg-white border border-slate-200 rounded text-slate-800 font-mono font-bold outline-none focus:border-emerald-400"
+                  />
+                ) : (
+                  <input
+                    {...register('value')}
+                    placeholder="값을 입력하세요..."
+                    className="px-2 py-1.5 bg-white border border-slate-200 rounded text-slate-800 font-mono font-bold outline-none focus:border-emerald-400"
+                  />
+                )}
+              </div>
+
+              {/* Value Type */}
+              <div className="grid grid-cols-[110px_1fr] items-center pt-1 border-t border-emerald-100/70">
+                <span className="text-slate-500 font-medium">Value Type Spec</span>
+
+                <select
+                  {...register('valueType')}
+                  className="px-1 py-0.5 border border-slate-200 rounded bg-white font-mono text-emerald-700 text-[11px] outline-none"
+                >
+                  {VALUE_TYPE_OPTIONS.map((vOpt) => (
+                    <option key={vOpt} value={vOpt}>
+                      {vOpt}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* File */}
+        {isFile && (
+          <div className="border border-purple-200 rounded overflow-hidden">
+            <div className="bg-purple-50 px-3 py-1.5 border-b border-purple-200 font-bold text-purple-800 flex items-center gap-1.5">
+              <FileIcon className="w-3.5 h-3.5 text-purple-600" />
+              File Source Specification
+            </div>
+
+            <div className="p-3 grid grid-cols-[110px_1fr] gap-y-2.5 items-center">
+              <div className="text-slate-600 font-semibold">Path / URL</div>
+
+              <input
+                {...register('value')}
+                placeholder="/aasx/documents/manual.pdf"
+                className="px-2 py-1 bg-white border border-slate-200 rounded outline-none focus:border-purple-400 font-mono"
+              />
+
+              <div className="text-slate-600 font-semibold">Content Type</div>
+
+              <input
+                {...register('contentType')}
+                placeholder="application/pdf"
+                className="px-2 py-1 bg-white border border-slate-200 rounded outline-none focus:border-purple-400 font-mono"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Range */}
+        {isRange && (
+          <div className="border border-amber-200 rounded overflow-hidden">
+            <div className="bg-amber-50 px-3 py-1.5 border-b border-amber-200 font-bold text-amber-800 flex items-center gap-1.5">
+              <SlidersHorizontal className="w-3.5 h-3.5 text-amber-600" />
+              Range Boundary Values
+            </div>
+
+            <div className="p-3 space-y-3">
+              <div className="flex gap-4">
+                <div className="flex-1 flex flex-col gap-1">
+                  <label className="font-semibold text-slate-600">Minimum Limit</label>
+
+                  <input
+                    {...register('min')}
+                    className="px-2 py-1 bg-white border border-slate-200 rounded font-mono outline-none focus:border-amber-400"
+                  />
+                </div>
+
+                <div className="flex-1 flex flex-col gap-1">
+                  <label className="font-semibold text-slate-600">Maximum Limit</label>
+
+                  <input
+                    {...register('max')}
+                    className="px-2 py-1 bg-white border border-slate-200 rounded font-mono outline-none focus:border-amber-400"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Collection */}
+        {isCollection && (
+          <div className="p-4 border border-dashed border-slate-300 rounded bg-slate-50 flex flex-col items-center justify-center text-slate-400">
+            <FolderTree className="w-5 h-5 mb-1.5 opacity-60 text-slate-500" />
+
+            <p className="font-medium text-[11px]">
+              이 노드는 복합 하위 요소를 포함하는 컨테이너 객체입니다.
+            </p>
+          </div>
+        )}
+
+        {/* Qualifiers */}
+        {!isCollection && (
+          <div className="border border-slate-200 rounded overflow-hidden">
+            <div className="bg-slate-50 px-3 py-1.5 border-b border-slate-200 font-bold text-slate-600 flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
+              Qualifiers
+            </div>
+
+            <div className="p-2 bg-slate-50/50 text-[11px] text-slate-400 text-center italic">
+              추후 제약조건 편집기 추가 예정
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* 푸터 */}
-      <div className="p-4 border-t border-slate-100 flex justify-end gap-2 bg-surface/50 shrink-0">
-        <button
-          type="button"
-          onClick={() => reset()}
-          className="px-4 py-1.5 text-[12px] font-medium text-subtext hover:bg-slate-100 rounded transition-colors"
-        >
-          Reset
-        </button>
+      {/* Footer */}
+      <div className="p-2 px-4 border-t border-slate-200 flex justify-end gap-2 bg-slate-50 shrink-0">
         <button
           type="submit"
-          className="px-5 py-1.5 text-[12px] font-bold text-white bg-accent hover:bg-accent-dark rounded shadow-sm transition-all"
+          className="px-4 py-1.5 text-[11px] font-bold text-white bg-blue-600 hover:bg-blue-700 rounded active:scale-[0.98] transition-all shadow-sm"
         >
           Save Changes
         </button>

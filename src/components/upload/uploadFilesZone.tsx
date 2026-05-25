@@ -1,17 +1,13 @@
 import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, File, X, Loader2 } from 'lucide-react'; // Loader2 추가
-import { useAppStore } from '../../store/useAppStore';
+import { Upload, File, X } from 'lucide-react';
+import { useUploadStore } from '../../store/useUploadStore';
 
 function UploadZone() {
-  const files = useAppStore((state) => state.files);
-  const addFiles = useAppStore((state) => state.addFiles);
-  const removeFile = useAppStore((state) => state.removeFile);
-  const clearFiles = useAppStore((state) => state.clearFiles);
-  const setStep = useAppStore((state) => state.setStep);
-  const step = useAppStore((state) => state.step); // 현재 상태 확인용
-
-  const isGenerating = step === 'generating';
+  const files = useUploadStore((state) => state.files);
+  const addFiles = useUploadStore((state) => state.addFiles);
+  const removeFile = useUploadStore((state) => state.removeFile);
+  const clearFiles = useUploadStore((state) => state.clearFiles);
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -24,12 +20,6 @@ function UploadZone() {
     onDrop,
     multiple: true,
   });
-
-  const handleGenerate = async () => {
-    setStep('generating');
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setStep('edit');
-  };
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
@@ -119,22 +109,6 @@ function UploadZone() {
                 </div>
               ))}
             </div>
-
-            {/* 버튼 영역: 정하신 hover-dark 사용 */}
-            <button
-              onClick={handleGenerate}
-              disabled={isGenerating}
-              className="w-full mt-6 px-6 py-3 bg-accent hover:bg-hover-dark text-white rounded-lg transition-colors font-medium disabled:opacity-70 disabled:cursor-not-allowed"
-            >
-              {isGenerating ? (
-                <div className="flex items-center justify-center gap-2">
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  <span>Generating...</span>
-                </div>
-              ) : (
-                'Generate AAS'
-              )}
-            </button>
           </div>
         )}
       </div>

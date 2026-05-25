@@ -1,10 +1,10 @@
-import { useAppStore } from '../../store/useAppStore';
+import { useUploadStore } from '../../store/useUploadStore';
 
 function ManualInputForm() {
-  const manualInput = useAppStore((state) => state.manualInput);
-  const updateManualInput = useAppStore((state) => state.updateManualInput);
+  const manualInput = useUploadStore((state) => state.manualInput);
+  const updateManualInput = useUploadStore((state) => state.updateManualInput);
 
-  // 입력창 공통 스타일을 변수로 빼두면 관리가 더 편해요!
+  // 입력창 공통 스타일
   const inputStyle =
     'w-full px-4 py-3 rounded-lg border border-line focus:outline-none focus:border-accent transition-colors';
 
