@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   ChevronRight,
   ChevronDown,
@@ -10,15 +10,11 @@ import {
   Image as ImageIcon,
   Zap,
   FileText,
+  UploadCloud,
 } from 'lucide-react';
-import pipelineData from '../../../public/mock/robot_arm_a_pipeline_result.json';
-import { useAASStore } from '../../store/useAASStore'; // Zustand 스토어 경로 확인 필요
-import type { AasNode } from '../../store/useAASStore';
-import type { AASEnvironment, AASNode, UITreeAAS } from '../../types/AAS';
+import { useAasStore } from '../../store/useAasStore';
+import type { AasNode, UITreeAas } from '../../types/AAS';
 
-// ==========================================
-// 1. AAS 표준 메타모델에 따른 아이콘 및 타입 판별
-// ==========================================
 const getAasTypeInfo = (node: AasNode) => {
   const type = node.modelType;
 
@@ -43,19 +39,16 @@ const getAasTypeInfo = (node: AasNode) => {
   }
 };
 
-// ==========================================
-// 2. 재귀 노드 컴포넌트 (TreeNode)
-// ==========================================
-const getChildren = (node: AASNode | UITreeAAS): AASNode[] => {
+const getChildren = (node: AasNode | UITreeAas): AasNode[] => {
   switch (node.modelType) {
     case 'AssetAdministrationShell':
-      return 'submodelNodes' in node ? node.submodelNodes || [] : [];
+      return 'submodelNodes' in node ? (node.submodelNodes as AasNode[]) || [] : [];
 
     case 'Submodel':
-      return node.submodelElements || [];
+      return (node.submodelElements as AasNode[]) || [];
 
     case 'SubmodelElementCollection':
-      return node.value || [];
+      return (node.value as AasNode[]) || [];
 
     default:
       return [];
@@ -68,24 +61,22 @@ function TreeNode({
   selectedNode,
   onSelect,
 }: {
-  node: AASNode | UITreeAAS;
+  node: AasNode | UITreeAas;
   level?: number;
   selectedNode: AasNode | null;
   onSelect: (node: AasNode) => void;
 }) {
   const [isOpen, setIsOpen] = useState(true);
 
-  // AAS 자식 요소 결합 로직
   const children = getChildren(node);
   const hasChildren = children && children.length > 0;
 
-  // 객체 대 객체 비교를 위해 idShort와 modelType 조합으로 선택 여부 판별
   const isSelected =
     selectedNode !== null &&
     selectedNode.idShort === node.idShort &&
     selectedNode.modelType === node.modelType;
 
-  const { icon } = getAasTypeInfo(node);
+  const { icon } = getAasTypeInfo(node as AasNode);
 
   const handleToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -94,7 +85,7 @@ function TreeNode({
 
   const handleSelect = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onSelect(node); // ID 대신 노드 객체 통째로 전달
+    onSelect(node as AasNode);
   };
 
   return (
@@ -152,51 +143,53 @@ function TreeNode({
   );
 }
 
-// ==========================================
-// 3. 메인 트리 뷰어 컴포넌트
-// ==========================================
-export default function AASTree() {
-  // Zustand 스토어의 모든 상태 연결
-  const { aasEnvironment, setAasEnvironment, selectedAASNode, setSelectedAASNode } = useAASStore();
-
-  // 컴포넌트 마운트 시 mock 데이터를 Zustand 전역 상태에 탑재 (API 연동 시 이 부분을 fetch 코드로 대체)
-  useEffect(() => {
-    if (!aasEnvironment) {
-      setAasEnvironment(pipelineData.aas_json as AASEnvironment);
-    }
-  }, [aasEnvironment, setAasEnvironment]);
+export default function AasTree() {
+  const { aasEnvironment, selectedAasNode, setSelectedAasNode } = useAasStore();
 
   const handleNodeSelect = (node: AasNode) => {
-    setSelectedAASNode(node);
+    setSelectedAasNode(node);
   };
 
-  // Zustand Store의 실시간 데이터를 기반으로 루트 트리 구성
   const aasData = aasEnvironment?.assetAdministrationShells?.[0];
   const submodelsData = aasEnvironment?.submodels || [];
 
-  const rootNode: UITreeAAS | null = aasData
+  const rootNode: UITreeAas | null = aasData
     ? {
         ...aasData,
         submodelNodes: submodelsData,
       }
     : null;
 
-  if (!rootNode)
-    return <div className="p-4 text-sm text-slate-500">데이터를 불러오는 중입니다...</div>;
+  if (!rootNode) {
+    return (
+      <div className="w-full h-full bg-white border border-slate-200 flex flex-col items-center justify-center text-slate-400 p-6 text-center font-sans">
+        <UploadCloud className="w-9 h-9 mb-2 opacity-30 text-blue-500 animate-pulse" />
+        <p className="text-[13px] font-semibold text-slate-600 mb-1">
+          조회된 AAS 데이터가 없습니다.
+        </p>
+        <p className="text-[11px] text-slate-400 leading-normal max-w-[210px]">
+          가이드 문서나 이미지를 업로드하면 파이프라인이 생성한 AAS 결과가 여기에 실시간으로
+          표시됩니다.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full bg-white border border-slate-200 overflow-x-hidden overflow-y-auto font-sans shadow-inner">
+      {/* Header */}
       <div className="p-2 border-b border-slate-200 bg-slate-50">
         <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-          AAS Environment
+          Aas Environment
         </h3>
       </div>
 
+      {/* Body */}
       <div className="py-2">
         <TreeNode
           node={rootNode}
           level={0}
-          selectedNode={selectedAASNode}
+          selectedNode={selectedAasNode}
           onSelect={handleNodeSelect}
         />
       </div>

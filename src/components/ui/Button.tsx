@@ -1,23 +1,35 @@
 import { Loader2 } from 'lucide-react';
+import { baseButtonStyles, variantStyles } from './Button.styles';
 
-type Props = {
+type ButtonVariant = 'default' | 'ghost' | 'outline';
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isGenerating?: boolean;
-  //   onclick: () => void;
-};
+  variant?: ButtonVariant;
+}
 
-export default function Button({ isGenerating }: Props) {
+export default function Button({
+  isGenerating,
+  variant = 'default',
+  onClick,
+  children,
+  className,
+  ...props
+}: ButtonProps) {
   return (
     <button
-      disabled={isGenerating}
-      className="w-full px-6 py-3 max-w-2xl bg-accent hover:bg-accent-dark text-white rounded-lg transition-colors"
+      disabled={isGenerating || props.disabled}
+      onClick={onClick}
+      className={`${baseButtonStyles} ${variantStyles[variant]} ${className || ''}`}
+      {...props}
     >
       {isGenerating ? (
-        <div className="flex items-center justify-center">
-          <Loader2 className="w-5 h-5 animate-spin" />
-          Generating...
-        </div>
+        <>
+          <Loader2 className="w-4 h-4 animate-spin" />
+          <span>Generating...</span>
+        </>
       ) : (
-        <div className="flex items-center justify-center gap-5">Generate AAS</div>
+        children || 'Generate AAS'
       )}
     </button>
   );
