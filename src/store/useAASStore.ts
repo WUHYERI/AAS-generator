@@ -1,48 +1,82 @@
 import { create } from 'zustand';
+import axios from 'axios';
 import type {
-  AASEnvironment,
+  AasEnvironment,
   AssetAdministrationShell,
   Submodel,
   SubmodelElement,
-} from '../types/AAS'; // 경로에 맞게 수정
+  AasNode,
+} from '../types/AAS';
 
-export type AasNode = AssetAdministrationShell | Submodel | SubmodelElement;
-
-interface AASState {
-  // 백엔드에서 받아온 전체 AAS JSON 데이터 환경 (트리 전체 소스)
-  aasEnvironment: AASEnvironment | null;
-  setAasEnvironment: (env: AASEnvironment | null) => void;
-
-  // 현재 트리에서 사용자가 선택한 노드
-  selectedAASNode: AasNode | null;
-  setSelectedAASNode: (node: AasNode | null) => void;
-
-  // 디테일 에딧 폼에서 수정 버튼을 눌렀을 때, 트리 내의 해당 데이터를 실시간 동기화하는 함수
-  updateAASNode: (updatedNode: AasNode) => void;
+export interface AasDescriptor {
+  idShort: string;
+  id: string;
+  assetKind: string;
+  assetType?: string;
+  submodels?: Submodel[];
 }
 
-export const useAASStore = create<AASState>((set) => ({
+interface AasState {
+  aasEnvironment: AasEnvironment | null;
+  setAasEnvironment: (env: AasEnvironment | null) => void;
+  selectedAasNode: AasNode | null;
+  setSelectedAasNode: (node: AasNode | null) => void;
+  updateAasNode: (updatedNode: AasNode) => void;
+  aasList: AasDescriptor[];
+  isLoading: boolean;
+  listError: string | null;
+  fetchAasLines: (registryUrl: string) => Promise<void>;
+}
+
+export const useAasStore = create<AasState>((set) => ({
   aasEnvironment: null,
   setAasEnvironment: (env) => set({ aasEnvironment: env }),
+  selectedAasNode: null,
+  setSelectedAasNode: (node) => set({ selectedAasNode: node }),
+  aasList: [],
+  isLoading: false,
+  listError: null,
 
-  selectedAASNode: null,
-  setSelectedAASNode: (node) => set({ selectedAASNode: node }),
+  // FastAPI 중계를 통한 AAS 목록 조회
+  fetchAasLines: async (registryUrl) => {
+    set({ isLoading: true, listError: null });
+    try {
+      const response = await axios.get('http://localhost:8000/api/aas-list', {
+        params: { registryUrl },
+      });
 
-  updateAASNode: (updatedNode) =>
+      // BaSyx v3.0 레지스트리 표준 구조({ result: [...] }) 대응 파싱
+      const list = response.data.result || response.data || [];
+      set({ aasList: list });
+    } catch (err: unknown) {
+      console.error('FastAPI AAS List Fetch Error:', err);
+
+      let errorMsg = 'AAS 목록을 불러오지 못했습니다.';
+
+      if (axios.isAxiosError(err)) {
+        errorMsg = err.response?.data?.detail || err.message;
+      } else if (err instanceof Error) {
+        errorMsg = err.message;
+      }
+
+      set({ listError: errorMsg });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  updateAasNode: (updatedNode) =>
     set((state) => {
       if (!state.aasEnvironment) return {};
 
-      // 불변성을 유지하며 깊은 트리 노드를 수정하는 재귀 도우미 함수
       const updateSubmodelElements = (
         elements: SubmodelElement[],
         targetNode: AasNode,
       ): SubmodelElement[] => {
         return elements.map((el) => {
-          // idShort가 같고 모델타입이 같으면 교체 (동일 계층 내 식별)
           if (el.idShort === targetNode.idShort && el.modelType === targetNode.modelType) {
             return targetNode as SubmodelElement;
           }
-          // Collection 폴더 하위라면 재귀적으로 자식 탐색 수행
           if (el.modelType === 'SubmodelElementCollection' && el.value) {
             return {
               ...el,
@@ -53,22 +87,20 @@ export const useAASStore = create<AASState>((set) => ({
         });
       };
 
-      // 최상위 Environment 데이터 복제 및 갱신 시작
       let nextShells = state.aasEnvironment.assetAdministrationShells
         ? [...state.aasEnvironment.assetAdministrationShells]
         : [];
       let nextSubmodels = state.aasEnvironment.submodels ? [...state.aasEnvironment.submodels] : [];
 
-      // 수정된 노드가 Submodel인 경우
-      if (updatedNode.modelType === 'Submodel') {
+      if (updatedNode.modelType === 'AssetAdministrationShell') {
+        nextShells = nextShells.map((shell) =>
+          shell.id === updatedNode.id ? (updatedNode as AssetAdministrationShell) : shell,
+        );
+      } else if (updatedNode.modelType === 'Submodel') {
         nextSubmodels = nextSubmodels.map((sm) =>
           sm.id === updatedNode.id ? (updatedNode as Submodel) : sm,
         );
-        // 만약 AAS 쉘 내부에 submodels가 객체 형태로 중첩되어 들어있는 기존 구조를 수용한다면 쉘 내부도 갱신
-      }
-      // 수정된 노드가 하부 엘리먼트(Property, File 등)인 경우
-      else {
-        // 최상위 독립 Submodels 순회하며 하부 트리 갱신
+      } else {
         nextSubmodels = nextSubmodels.map((sm) => ({
           ...sm,
           submodelElements: sm.submodelElements
@@ -76,23 +108,25 @@ export const useAASStore = create<AASState>((set) => ({
             : [],
         }));
 
-        // AAS 쉘 내부에 중첩된 Submodels 트리도 똑같이 갱신
         nextShells = nextShells.map((shell) => ({
           ...shell,
-          submodels: shell.submodels?.map((sm) => ({
-            ...sm,
-            submodelElements: sm.submodelElements
-              ? updateSubmodelElements(sm.submodelElements, updatedNode)
-              : [],
-          })),
+          submodels: shell.submodels?.map((sm) => {
+            if (!('submodelElements' in sm)) return sm;
+
+            return {
+              ...sm,
+              submodelElements: sm.submodelElements
+                ? updateSubmodelElements(sm.submodelElements, updatedNode)
+                : [],
+            };
+          }),
         }));
       }
 
-      // 선택된 현재 노드 상태도 실시간으로 수정본 반영
       const isSelectedNodeUpdated =
-        state.selectedAASNode &&
-        state.selectedAASNode.idShort === updatedNode.idShort &&
-        state.selectedAASNode.modelType === updatedNode.modelType;
+        state.selectedAasNode &&
+        state.selectedAasNode.idShort === updatedNode.idShort &&
+        state.selectedAasNode.modelType === updatedNode.modelType;
 
       return {
         aasEnvironment: {
@@ -100,7 +134,7 @@ export const useAASStore = create<AASState>((set) => ({
           assetAdministrationShells: nextShells,
           submodels: nextSubmodels,
         },
-        selectedAASNode: isSelectedNodeUpdated ? updatedNode : state.selectedAASNode,
+        selectedAasNode: isSelectedNodeUpdated ? updatedNode : state.selectedAasNode,
       };
     }),
 }));

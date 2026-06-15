@@ -13,14 +13,15 @@ import {
 } from '@babylonjs/core';
 import '@babylonjs/loaders';
 import { useViewerStore } from '../../store/useViewerStore';
-import { Move, RotateCcw } from 'lucide-react';
+import { useAasStore } from '../../store/useAasStore';
+import { Move, RotateCcw, Box } from 'lucide-react';
 
-function ModelViewer() {
+export default function ModelViewer() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sceneRef = useRef<Scene | null>(null);
   const hlRef = useRef<HighlightLayer | null>(null);
 
-  // 개별 맵 구조로 변경된 스토어 구독
+  const { aasEnvironment } = useAasStore();
   const {
     selectedNodeName,
     setSelectedNodeName,
@@ -30,16 +31,16 @@ function ModelViewer() {
     setRotationAngleY,
   } = useViewerStore();
 
-  // 현재 선택된 부품의 고유 각도 꺼내기 (기본값 0)
   const currentAngleX = selectedNodeName ? rotationAnglesX[selectedNodeName] || 0 : 0;
   const currentAngleY = selectedNodeName ? rotationAnglesY[selectedNodeName] || 0 : 0;
+
+  const assetId = aasEnvironment?.assetAdministrationShells?.[0]?.idShort;
+  const modelUrl = assetId ? `http://localhost:8000/api/models/${assetId}` : null;
 
   useEffect(() => {
     if (!canvasRef.current) return;
 
     const engine = new Engine(canvasRef.current, true);
-    engine.displayLoadingUI();
-
     const scene = new Scene(engine);
     sceneRef.current = scene;
     scene.clearColor = new Color4(0.96, 0.97, 0.98, 1);
@@ -57,13 +58,23 @@ function ModelViewer() {
     const hl = new HighlightLayer('hl', scene);
     hlRef.current = hl;
 
-    ImportMeshAsync('/mock/Untitled.glb', scene).then((result) => {
-      const root = result.meshes[0];
-      camera.setTarget(root.getAbsolutePivotPoint().clone());
-      engine.hideLoadingUI();
-    });
+    if (modelUrl) {
+      engine.displayLoadingUI();
 
-    // 클릭 핸들러: 대표 파츠 문자열 추출
+      ImportMeshAsync(modelUrl, scene)
+        .then((result) => {
+          const root = result.meshes[0];
+          if (root) {
+            camera.setTarget(root.getAbsolutePivotPoint().clone());
+          }
+          engine.hideLoadingUI();
+        })
+        .catch((err) => {
+          console.error('백엔드에서 3D 모델 로드 실패:', err);
+          engine.hideLoadingUI();
+        });
+    }
+
     scene.onPointerDown = (_evt, pickResult) => {
       if (pickResult.hit && pickResult.pickedMesh) {
         const pickedName = pickResult.pickedMesh.name;
@@ -83,9 +94,8 @@ function ModelViewer() {
       scene.dispose();
       engine.dispose();
     };
-  }, [setSelectedNodeName]);
+  }, [modelUrl, setSelectedNodeName]);
 
-  // 테두리(하이라이트) 효과 구현
   useEffect(() => {
     const scene = sceneRef.current;
     const hl = hlRef.current;
@@ -102,24 +112,17 @@ function ModelViewer() {
     }
   }, [selectedNodeName]);
 
-  // ★ 개별 부품 독립 회전 제어 구현
   useEffect(() => {
     const scene = sceneRef.current;
     if (!scene) return;
 
-    // 스토어에 기록된 모든 부품들의 개별 각도를 씬 전체 메쉬에 각각 주입
     scene.meshes.forEach((mesh) => {
-      // 메쉬의 원래 기하학적 baseName 추출
       const baseName = mesh.name.split('_primitive')[0].split('.')[0];
-
-      // 해당 부품 이름으로 저장된 각도가 있다면 가져옴 (없으면 0)
       const degX = rotationAnglesX[baseName] || 0;
       const degY = rotationAnglesY[baseName] || 0;
-
       const radX = degX * (Math.PI / 180);
       const radY = degY * (Math.PI / 180);
 
-      // 쿼터니언 해제 및 개별 회전 적용
       if (mesh.rotationQuaternion) {
         mesh.rotationQuaternion = null;
       }
@@ -127,9 +130,8 @@ function ModelViewer() {
       mesh.rotation.y = radY;
       mesh.computeWorldMatrix(true);
     });
-  }, [rotationAnglesX, rotationAnglesY]); // 모든 각도 맵의 변화를 감지하여 유기적 연동
+  }, [rotationAnglesX, rotationAnglesY]);
 
-  // 현재 선택된 관절 초기화
   const handleResetAngles = () => {
     if (selectedNodeName) {
       setRotationAngleX(selectedNodeName, 0);
@@ -137,9 +139,22 @@ function ModelViewer() {
     }
   };
 
+  if (!modelUrl) {
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 text-slate-400 font-sans p-6 text-center select-none border border-slate-200 rounded-xl">
+        <Box className="w-10 h-10 mb-3 opacity-20 text-slate-500" />
+        <p className="text-[13px] font-bold text-slate-600 mb-0.5">3D 시뮬레이터 준비됨</p>
+        <p className="text-[11px] text-slate-400 max-w-[240px] leading-normal">
+          파일 업로드 후 백엔드 파이프라인 처리가 완료되면 경량화 디지털 트윈(GLB) 모델이 실시간으로
+          동기화됩니다.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-full relative bg-surface">
-      {/* 부품 표시 UI */}
+      {/* Component Indicator */}
       <div className="absolute top-4 left-4 z-10">
         <div className="bg-white/90 backdrop-blur-md shadow-sm border border-line px-3 py-1.5 rounded-lg flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
@@ -149,7 +164,7 @@ function ModelViewer() {
         </div>
       </div>
 
-      {/* 우측 하단 제어기 */}
+      {/* Controller */}
       {selectedNodeName && (
         <div className="absolute bottom-6 right-6 z-10 w-64 bg-white/95 backdrop-blur-md shadow-xl border border-line rounded-xl p-4 space-y-4">
           <div className="flex items-center justify-between border-b border-line pb-2">
@@ -165,7 +180,7 @@ function ModelViewer() {
           </div>
 
           <div className="space-y-4">
-            {/* X축 제어 슬라이더 */}
+            {/* X-Axis Slider */}
             <div className="space-y-1.5">
               <div className="flex justify-between text-[11px] font-mono">
                 <span className="text-subtext uppercase">Rotation (X)</span>
@@ -181,7 +196,7 @@ function ModelViewer() {
               />
             </div>
 
-            {/* Y축 제어 슬라이더 */}
+            {/* Y-Axis Slider */}
             <div className="space-y-1.5">
               <div className="flex justify-between text-[11px] font-mono">
                 <span className="text-subtext uppercase">Rotation (Y)</span>
@@ -204,5 +219,3 @@ function ModelViewer() {
     </div>
   );
 }
-
-export default ModelViewer;
