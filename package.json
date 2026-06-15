@@ -13,11 +13,13 @@
   "dependencies": {
     "@babylonjs/core": "^9.5.2",
     "@babylonjs/loaders": "^9.5.2",
+    "axios": "^1.16.1",
     "lucide-react": "^1.14.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-dropzone": "^15.0.0",
     "react-hook-form": "^7.75.0",
+    "react-router-dom": "^7.16.0",
     "zustand": "^5.0.13"
   },
   "devDependencies": {
