@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, useWatch, useFieldArray } from 'react-hook-form';
 import { useAasStore } from '../../store/useAasStore';
 import {
@@ -13,8 +13,11 @@ import {
   Trash2,
   Bookmark,
   ShieldCheck,
+  CheckCircle2,
+  ListChecks,
+  Loader2,
 } from 'lucide-react';
-import type { AasNode } from '../../types/AAS';
+import type { AasMappingPlan, AasNode } from '../../types/AAS';
 
 interface LangString {
   language: string;
@@ -61,8 +64,33 @@ const VALUE_TYPE_OPTIONS = [
   'xs:anyURI',
 ];
 
+const semanticIdOf = (node: AasNode) =>
+  'semanticId' in node ? node.semanticId?.keys?.[0]?.value : undefined;
+
+const findMappingProperty = (mappingPlan: AasMappingPlan | null, node: AasNode) => {
+  if (!mappingPlan) return undefined;
+  const semanticId = semanticIdOf(node);
+  return mappingPlan.submodels
+    ?.flatMap((submodel) => submodel.properties || [])
+    .find(
+      (property) =>
+        property.idShort === node.idShort &&
+        (!semanticId || !property.semanticId || property.semanticId === semanticId) &&
+        (property.candidateSuggestions?.length || property.reviewRequired),
+    );
+};
+
 export default function AasDetailEditor() {
-  const { selectedAasNode, updateAasNode } = useAasStore();
+  const {
+    selectedAasNode,
+    updateAasNode,
+    mappingPlan,
+    applyCandidateSelection,
+    saveAasResult,
+    isSaving,
+    saveError,
+  } = useAasStore();
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
   const { register, handleSubmit, reset, control } = useForm<AasFormValues>({
     defaultValues: {
@@ -144,10 +172,15 @@ export default function AasDetailEditor() {
           ...data,
         } as AasNode);
       }
-      alert('변경사항이 성공적으로 저장되어 트리에 반영되었습니다!');
+      const persisted = await saveAasResult();
+      setSaveMessage(
+        persisted
+          ? '변경사항을 저장했습니다.'
+          : '변경사항을 현재 AAS 화면에 반영했습니다.',
+      );
     } catch (error) {
       console.error('저장 중 오류 발생:', error);
-      alert('저장에 실패했습니다.');
+      setSaveMessage('저장에 실패했습니다.');
     }
   };
 
@@ -167,6 +200,7 @@ export default function AasDetailEditor() {
   const isFile = type === 'File';
   const isRange = type === 'Range';
   const isCollection = type === 'SubmodelElementCollection' || type === 'Submodel';
+  const mappingProperty = findMappingProperty(mappingPlan, selectedAasNode);
 
   return (
     <form
@@ -331,6 +365,56 @@ export default function AasDetailEditor() {
           </div>
         </div>
 
+        {mappingProperty?.candidateSuggestions?.length ? (
+          <div className="border border-violet-200 rounded overflow-hidden bg-violet-50/30">
+            <div className="bg-violet-50 px-3 py-1.5 border-b border-violet-200 font-bold text-violet-800 flex items-center justify-between gap-2">
+              <span className="flex items-center gap-1.5">
+                <ListChecks className="w-3.5 h-3.5 text-violet-600" />
+                후보 요소 목록
+              </span>
+              <span className="text-[10px] font-medium text-violet-600">
+                {mappingProperty.reviewRequired ? '확인이 필요한 매칭' : '자동 승인된 매칭'}
+              </span>
+            </div>
+            <div className="p-2 space-y-1.5">
+              <p className="px-1 text-[11px] leading-relaxed text-slate-500">
+                자동 승인 결과입니다. 더 적합한 후보를 선택한 뒤 변경사항을 저장할 수 있습니다.
+              </p>
+              {mappingProperty.candidateSuggestions.map((candidate) => {
+                const isCurrent = candidate.candidate_id === mappingProperty.aas_property_id;
+                return (
+                  <button
+                    key={candidate.candidate_id}
+                    type="button"
+                    onClick={() => {
+                      applyCandidateSelection(mappingProperty.semantic_node_id, candidate);
+                      setSaveMessage(`'${candidate.idShort}' 후보를 선택했습니다. 저장하면 반영됩니다.`);
+                    }}
+                    className={`w-full rounded border px-2.5 py-2 text-left transition-colors ${
+                      isCurrent
+                        ? 'border-violet-400 bg-white shadow-sm'
+                        : 'border-violet-100 bg-white/60 hover:border-violet-300 hover:bg-white'
+                    }`}
+                  >
+                    <span className="flex items-center justify-between gap-2">
+                      <span className="font-semibold text-slate-700 truncate">
+                        {candidate.idShort}
+                      </span>
+                      <span className="flex items-center gap-1 shrink-0 text-[10px] font-bold text-violet-700">
+                        {isCurrent && <CheckCircle2 className="w-3 h-3" />}
+                        {candidate.score !== undefined ? `${Math.round(candidate.score * 100)}%` : ''}
+                      </span>
+                    </span>
+                    <span className="mt-0.5 block truncate font-mono text-[10px] text-slate-400">
+                      {candidate.submodel || 'Submodel 미지정'} · {candidate.semanticId || 'Semantic ID 없음'}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ) : null}
+
         {/* Property */}
         {isProperty && (
           <div className="border border-emerald-200 rounded overflow-hidden">
@@ -483,11 +567,17 @@ export default function AasDetailEditor() {
 
       {/* Footer */}
       <div className="p-2 px-4 border-t border-slate-200 flex justify-end gap-2 bg-slate-50 shrink-0">
+        {(saveMessage || saveError) && (
+          <span className={`mr-auto self-center text-[11px] ${saveError ? 'text-rose-600' : 'text-emerald-700'}`}>
+            {saveError || saveMessage}
+          </span>
+        )}
         <button
           type="submit"
+          disabled={isSaving}
           className="px-4 py-1.5 text-[11px] font-bold text-white bg-blue-600 hover:bg-blue-700 rounded active:scale-[0.98] transition-all shadow-sm"
         >
-          Save Changes
+          {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : '변경사항 저장'}
         </button>
       </div>
     </form>

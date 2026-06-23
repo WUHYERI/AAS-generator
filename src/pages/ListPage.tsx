@@ -1,17 +1,21 @@
 import { useEffect } from 'react';
-import { useAasStore } from '../store/useAasStore';
-import { useBasyxStore } from '../store/useBasyxStore';
-import { Server, RefreshCw, FileText } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAasStore, type AasDescriptor } from '../store/useAasStore';
+import { Server, RefreshCw, FileText, FolderTree } from 'lucide-react';
+import { API_BASE_URL } from '../lib/api';
 
 export default function ListPage() {
-  const { registryUrl, connected } = useBasyxStore();
-  const { aasList, isLoading, listError, fetchAasLines } = useAasStore();
+  const navigate = useNavigate();
+  const { aasList, isLoading, listError, fetchAasLines, loadAasResult } = useAasStore();
 
   useEffect(() => {
-    if (connected) {
-      fetchAasLines(registryUrl);
-    }
-  }, [connected, registryUrl, fetchAasLines]);
+    fetchAasLines();
+  }, [fetchAasLines]);
+
+  const handleOpenAas = async (aas: AasDescriptor) => {
+    await loadAasResult(aas.resultId, aas.sourceUrl);
+    navigate('/edit');
+  };
 
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
@@ -20,19 +24,19 @@ export default function ListPage() {
         <div>
           <h1 className="text-xl font-bold text-slate-800 flex items-center gap-2">
             <Server className="text-accent" size={22} />
-            디지털 트윈 자산(AAS) 목록 조회
+            생성된 AAS 목록 조회
           </h1>
           <p className="text-xs text-subtext mt-1">
-            연결된 레지스트리 허브:{' '}
+            연결된 백엔드 API:{' '}
             <span className="font-mono text-accent-dark bg-hover-light px-2 py-0.5 rounded-lg border border-accent-line/30">
-              {registryUrl}
+              {API_BASE_URL}
             </span>
           </p>
         </div>
 
         <button
-          onClick={() => fetchAasLines(registryUrl)}
-          disabled={isLoading || !connected}
+          onClick={() => fetchAasLines()}
+          disabled={isLoading}
           className="flex items-center gap-1.5 px-3 py-2 border border-line rounded-xl text-xs font-semibold hover:bg-surface active:scale-95 disabled:opacity-50 transition-all shadow-sm bg-white text-slate-700 cursor-pointer"
         >
           <RefreshCw
@@ -43,41 +47,32 @@ export default function ListPage() {
         </button>
       </div>
 
-      {/* Connection Exception Status */}
-      {!connected && (
-        <div className="text-center py-12 border-2 border-dashed border-line rounded-2xl text-subtext text-sm bg-white shadow-md">
-          상단 네비게이션바에서 Eclipse BaSyx 연결해 주세요.
-        </div>
-      )}
-
       {/* Loading Status */}
-      {connected && isLoading && (
+      {isLoading && (
         <div className="text-center py-12 text-slate-500 text-sm flex flex-col items-center gap-2 bg-white rounded-2xl shadow-md border border-line/30">
           <RefreshCw size={20} className="animate-spin text-accent" />
-          <span className="text-subtext">
-            BaSyx Registry에서 자산 명단을 안전하게 읽어오는 중입니다...
-          </span>
+          <span className="text-subtext">백엔드에서 생성된 AAS 목록을 읽어오는 중입니다...</span>
         </div>
       )}
 
       {/* Error Status */}
-      {connected && !isLoading && listError && (
+      {!isLoading && listError && (
         <div className="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-2xl text-xs font-medium shadow-sm">
-          ❌ {listError}
+          {listError}
         </div>
       )}
 
       {/* AAS List View */}
-      {connected && !isLoading && !listError && (
+      {!isLoading && !listError && (
         <div className="grid gap-4">
           {aasList.length === 0 ? (
             <div className="text-center py-12 border-2 border-dashed border-line rounded-2xl text-subtext text-sm bg-white shadow-lg">
-              등록된 자산 관리 쉘(AAS)이 없습니다. 관리자 도구에서 AAS를 추가해 보세요!
+              아직 생성된 AAS가 없습니다. PDF 매뉴얼을 업로드해 새 AAS를 생성해 보세요.
             </div>
           ) : (
             aasList.map((aas) => (
               <div
-                key={aas.id}
+                key={`${aas.sourceUrl || aas.resultId || aas.id}`}
                 className="flex items-center justify-between p-5 bg-white border border-line/50 rounded-2xl shadow-md hover:border-accent-line hover:shadow-lg transition-all duration-200 group"
               >
                 <div className="flex items-center gap-4 min-w-0">
@@ -92,6 +87,12 @@ export default function ListPage() {
                     <p className="text-[10px] text-subtext font-mono mt-1 truncate">
                       Global ID: {aas.id}
                     </p>
+                    <p className="text-[10px] text-subtext mt-1">
+                      {aas.submodels?.length || 0} submodels
+                      {typeof aas.propertyCount === 'number'
+                        ? ` · ${aas.propertyCount} elements`
+                        : ''}
+                    </p>
                   </div>
                 </div>
 
@@ -100,8 +101,13 @@ export default function ListPage() {
                     {aas.assetKind || 'Instance'}
                   </span>
 
-                  <button className="px-3 py-2 bg-accent hover:bg-hover-dark active:scale-95 text-white rounded-xl text-xs font-semibold shadow-sm transition-all cursor-pointer">
-                    대시보드 보기
+                  <button
+                    onClick={() => handleOpenAas(aas)}
+                    disabled={!aas.resultId && !aas.sourceUrl}
+                    className="px-3 py-2 bg-accent hover:bg-hover-dark active:scale-95 text-white rounded-xl text-xs font-semibold shadow-sm transition-all cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+                  >
+                    <FolderTree size={13} />
+                    계층 보기
                   </button>
                 </div>
               </div>

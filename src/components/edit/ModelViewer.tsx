@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import {
   Engine,
   Scene,
@@ -15,16 +15,116 @@ import '@babylonjs/loaders';
 import { useViewerStore } from '../../store/useViewerStore';
 import { useAasStore } from '../../store/useAasStore';
 import { Move, RotateCcw, Box } from 'lucide-react';
+import { apiUrl } from '../../lib/api';
+import type { AasEnvironment, SubmodelElement } from '../../types/AAS';
+
+const findModelFileValue = (aasEnvironment: AasEnvironment | null): string | null => {
+  const findInElements = (elements: SubmodelElement[] = []): string | null => {
+    for (const element of elements) {
+      if (
+        element.modelType === 'File' &&
+        element.idShort === 'ModelFile' &&
+        typeof element.value === 'string' &&
+        element.value.trim()
+      ) {
+        return element.value.trim();
+      }
+
+      if (element.modelType === 'SubmodelElementCollection') {
+        const nested = findInElements(element.value || []);
+        if (nested) return nested;
+      }
+    }
+
+    return null;
+  };
+
+  for (const submodel of aasEnvironment?.submodels || []) {
+    const modelFileValue = findInElements(submodel.submodelElements || []);
+    if (modelFileValue) return modelFileValue;
+  }
+
+  return null;
+};
+
+const resolveModelUrl = (aasEnvironment: AasEnvironment | null): string | null => {
+  const modelFileValue = findModelFileValue(aasEnvironment);
+  const assetId = aasEnvironment?.assetAdministrationShells?.[0]?.idShort;
+
+  if (modelFileValue?.startsWith('http://') || modelFileValue?.startsWith('https://')) {
+    return modelFileValue;
+  }
+
+  if (modelFileValue?.startsWith('/api/')) {
+    return apiUrl(modelFileValue);
+  }
+
+  if (modelFileValue?.includes('/AAS-BackEnd/') || modelFileValue?.startsWith('/Users/')) {
+    return assetId ? apiUrl(`/api/models/${assetId}`) : null;
+  }
+
+  if (modelFileValue?.startsWith('/')) {
+    return modelFileValue;
+  }
+
+  if (modelFileValue && /\.(glb|gltf)$/i.test(modelFileValue)) {
+    return apiUrl(`/api/model-files/${modelFileValue.replace(/^\/+/, '')}`);
+  }
+
+  return assetId ? apiUrl(`/api/models/${assetId}`) : null;
+};
+
+const selectablePartNames = (aasEnvironment: AasEnvironment | null): string[] => {
+  const names: string[] = [];
+
+  const findValue = (elements: SubmodelElement[] | undefined, idShort: string): string | null => {
+    for (const element of elements || []) {
+      if (element.modelType === 'Property' && element.idShort === idShort && element.value) {
+        return element.value;
+      }
+      if (element.modelType === 'SubmodelElementCollection') {
+        const nested = findValue(element.value, idShort);
+        if (nested) return nested;
+      }
+    }
+    return null;
+  };
+
+  const walk = (elements: SubmodelElement[] | undefined) => {
+    for (const element of elements || []) {
+      if (element.modelType !== 'SubmodelElementCollection') continue;
+      if (element.idShort === 'SelectableParts') {
+        for (const part of element.value || []) {
+          if (part.modelType !== 'SubmodelElementCollection') continue;
+          const meshName = findValue(part.value, 'MeshName');
+          const partId = findValue(part.value, 'PartId');
+          const name = meshName || partId || part.idShort;
+          if (name && !names.includes(name)) names.push(name);
+        }
+      } else {
+        walk(element.value);
+      }
+    }
+  };
+
+  for (const submodel of aasEnvironment?.submodels || []) {
+    walk(submodel.submodelElements);
+  }
+
+  return names;
+};
 
 export default function ModelViewer() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sceneRef = useRef<Scene | null>(null);
   const hlRef = useRef<HighlightLayer | null>(null);
+  const selectedNodeNameRef = useRef<string | null>(null);
 
   const { aasEnvironment } = useAasStore();
   const {
     selectedNodeName,
     setSelectedNodeName,
+    setIsModelLoaded,
     rotationAnglesX,
     rotationAnglesY,
     setRotationAngleX,
@@ -34,12 +134,17 @@ export default function ModelViewer() {
   const currentAngleX = selectedNodeName ? rotationAnglesX[selectedNodeName] || 0 : 0;
   const currentAngleY = selectedNodeName ? rotationAnglesY[selectedNodeName] || 0 : 0;
 
-  const assetId = aasEnvironment?.assetAdministrationShells?.[0]?.idShort;
-  const modelUrl = assetId ? `http://localhost:8000/api/models/${assetId}` : null;
+  const modelUrl = resolveModelUrl(aasEnvironment);
+  const partNames = useMemo(() => selectablePartNames(aasEnvironment), [aasEnvironment]);
+
+  useEffect(() => {
+    selectedNodeNameRef.current = selectedNodeName;
+  }, [selectedNodeName]);
 
   useEffect(() => {
     if (!canvasRef.current) return;
 
+    setIsModelLoaded(false);
     const engine = new Engine(canvasRef.current, true);
     const scene = new Scene(engine);
     sceneRef.current = scene;
@@ -67,10 +172,12 @@ export default function ModelViewer() {
           if (root) {
             camera.setTarget(root.getAbsolutePivotPoint().clone());
           }
+          setIsModelLoaded(true);
           engine.hideLoadingUI();
         })
         .catch((err) => {
-          console.error('백엔드에서 3D 모델 로드 실패:', err);
+          console.error('3D 모델 로드 실패:', err);
+          setIsModelLoaded(false);
           engine.hideLoadingUI();
         });
     }
@@ -79,7 +186,7 @@ export default function ModelViewer() {
       if (pickResult.hit && pickResult.pickedMesh) {
         const pickedName = pickResult.pickedMesh.name;
         const baseName = pickedName.split('_primitive')[0].split('.')[0];
-        setSelectedNodeName(baseName);
+        setSelectedNodeName(selectedNodeNameRef.current === baseName ? null : baseName);
       } else {
         setSelectedNodeName(null);
       }
@@ -93,8 +200,9 @@ export default function ModelViewer() {
       window.removeEventListener('resize', handleResize);
       scene.dispose();
       engine.dispose();
+      setIsModelLoaded(false);
     };
-  }, [modelUrl, setSelectedNodeName]);
+  }, [modelUrl, setIsModelLoaded, setSelectedNodeName]);
 
   useEffect(() => {
     const scene = sceneRef.current;
@@ -163,6 +271,28 @@ export default function ModelViewer() {
           </span>
         </div>
       </div>
+
+      {partNames.length > 0 && (
+        <div className="absolute top-14 left-4 z-10 max-w-[70%] flex flex-wrap gap-1.5">
+          {partNames.map((partName) => {
+            const active = selectedNodeName === partName;
+            return (
+              <button
+                key={partName}
+                onClick={() => setSelectedNodeName(active ? null : partName)}
+                className={`h-7 max-w-36 truncate rounded-md border px-2 text-[11px] font-semibold shadow-sm transition-colors ${
+                  active
+                    ? 'border-accent bg-accent text-white'
+                    : 'border-line bg-white/90 text-slate-600 hover:bg-hover-light'
+                }`}
+                title={partName}
+              >
+                {partName}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* Controller */}
       {selectedNodeName && (

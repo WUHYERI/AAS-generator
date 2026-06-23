@@ -131,6 +131,38 @@ export interface AasEnvironment {
   conceptDescriptions?: unknown[];
 }
 
+export interface AasMappingCandidate {
+  candidate_id: string;
+  idShort: string;
+  submodel?: string;
+  source?: string;
+  score?: number;
+  semanticId?: string;
+  eclassIrdi?: string;
+  reason?: string;
+}
+
+export interface AasMappingProperty {
+  semantic_node_id?: string;
+  aas_property_id?: string;
+  idShort: string;
+  semanticId?: string;
+  eclassIrdi?: string;
+  submodel?: string;
+  matchDecision?: string;
+  reviewRequired?: boolean;
+  candidateSuggestions?: AasMappingCandidate[];
+}
+
+export interface AasMappingPlan {
+  submodels?: Array<{
+    idShort: string;
+    properties?: AasMappingProperty[];
+  }>;
+  reviewQueue?: Array<Record<string, unknown>>;
+  generationStatus?: string;
+}
+
 // 백엔드 파이프라인 응답 구조
 export interface AasPipelineResponse {
   asset_package: Record<string, unknown>;

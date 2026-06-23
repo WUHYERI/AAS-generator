@@ -1,6 +1,9 @@
 # Logs
 logs
 *.log
+.DS_Store
+.idea/
+public/mock/user_manual_asset.aas.json
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

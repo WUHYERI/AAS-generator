@@ -151,7 +151,11 @@ export default function AasTree() {
   };
 
   const aasData = aasEnvironment?.assetAdministrationShells?.[0];
-  const submodelsData = aasEnvironment?.submodels || [];
+  // 백엔드가 보낸 실제 요소가 있는 서브모델만 트리에 렌더링한다.
+  // 빈 기본 템플릿이 생성 결과처럼 보이는 혼동을 막는다.
+  const submodelsData = (aasEnvironment?.submodels || []).filter(
+    (submodel) => (submodel.submodelElements?.length || 0) > 0,
+  );
 
   const rootNode: UITreeAas | null = aasData
     ? {
